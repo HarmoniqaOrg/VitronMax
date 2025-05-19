@@ -22,16 +22,19 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           
+      - name: Format with black
+        run: |
+          pip install black==23.7.0
+          black .
+          
       - name: Lint with flake8
         run: |
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          
-      - name: Check formatting with black
-        run: |
-          black --check .
+          pip install flake8
+          flake8 app/ tests/ --count --max-complexity=10 --max-line-length=127 --statistics
           
       - name: Type check with mypy
         run: |
+          pip install mypy
           mypy --strict app/
           
       - name: Test with pytest
