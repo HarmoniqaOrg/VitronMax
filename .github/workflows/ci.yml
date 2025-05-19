@@ -49,3 +49,17 @@ jobs:
         run: |
           echo "Running Docker build in non-blocking mode for initial deployment. Failures will be addressed in a dedicated PR."
           docker build -t vitronmax:test . || true
+
+  deploy:
+    needs: test
+    if: github.ref == 'refs/heads/main' # Only deploy on main branch
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      
+      - name: Deploy to Fly.io
+        run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
