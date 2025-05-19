@@ -98,3 +98,21 @@ Download the results of a completed batch prediction job as a CSV file.
 **Error responses**:
 - 400: Job not completed yet
 - 404: Job not found or results not available
+
+### POST /report
+Generate a PDF report for a molecule based on its SMILES string.
+
+**Request**:
+```json
+{
+  "smi": "CCO"  // SMILES string of the molecule
+}
+```
+
+**Response**:
+- PDF file download with detailed report (Content-Type: application/pdf)
+
+**Error responses**:
+- 400: Invalid SMILES string
+- 422: Validation error (missing or empty SMILES)
+- 500: Error generating PDF report
