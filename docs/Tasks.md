@@ -12,3 +12,4 @@
 | 2025-05-19 | Deploy to production (#PRD-§3.6) | [PR #3](https://github.com/HarmoniqaOrg/VitronMax/pull/3) | ✅ Done | Successfully deployed to https://vitronmax.fly.dev/ |
 | 2025-05-19 | Implement `/report` PDF generation endpoint (#PRD-§3.3) | [PR #4](https://github.com/HarmoniqaOrg/VitronMax/pull/4) | ✅ Done (commit: 3686405) | PDF report generation endpoint implemented |
 | 2025-05-19 | Technical debt: Fix mypy and flake8 issues (Global Rules #1, #5) | [Future PR] | ⏳ Pending | Fix strict type checking, linting issues, and remove unused imports |
+| 2025-05-19 | Technical debt: Make tests more resilient (Global Rules #5) | [PR #4](https://github.com/HarmoniqaOrg/VitronMax/pull/4) | ✅ Done | Fixed test failures in CI, updated GitHub Actions versions |
