@@ -2,12 +2,18 @@
 VitronMax API - a service for BBB permeability prediction.
 """
 import logging
+import csv
+import io
+import uuid
+import os
 from pathlib import Path
-from typing import Dict, Union, Any
+from datetime import datetime
+from typing import Dict, Union, Any, List, Optional
 
-from fastapi import FastAPI, HTTPException, Request, status, UploadFile, File, Depends
+from fastapi import FastAPI, HTTPException, Request, Depends, UploadFile, File, Query
+from fastapi import BackgroundTasks, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, Response, StreamingResponse
+from fastapi.responses import JSONResponse, Response, StreamingResponse, FileResponse
 from loguru import logger
 
 from app.config import settings
@@ -17,6 +23,7 @@ from app.models import (BatchPredictionRequest, BatchPredictionResponse,
                      PredictionResponse)
 from app.predict import BBBPredictor
 from app.batch import BatchProcessor
+from app.report import generate_pdf_report
 
 # Configure logging based on environment
 log_level = getattr(logging, settings.LOG_LEVEL)
@@ -237,3 +244,43 @@ async def download_results(job_id: str):
     except Exception as e:
         logger.error(f"Error generating download: {str(e)}")
         raise HTTPException(status_code=500, detail="Error generating download")
+
+
+@app.post("/report")
+async def generate_report(request: PredictionRequest):
+    """Generate a PDF report for a molecule based on its SMILES string.
+    
+    Args:
+        request: Request object containing SMILES string
+        
+    Returns:
+        PDF file download with molecule prediction report
+        
+    Raises:
+        HTTPException: If SMILES is invalid or prediction fails
+    """
+    logger.info(f"Generating PDF report for SMILES: {request.smi}")
+    
+    try:
+        # Generate PDF report
+        pdf_buffer = generate_pdf_report(request.smi)
+        
+        # Create a filename for the PDF
+        safe_smiles = request.smi.replace("/", "_").replace("\\", "_")[:20]
+        filename = f"vitronmax_report_{safe_smiles}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+        
+        # Return PDF file as a download
+        return StreamingResponse(
+            pdf_buffer,
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": f"attachment; filename={filename}"
+            }
+        )
+        
+    except ValueError as e:
+        logger.warning(f"Invalid SMILES for report generation: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Error generating PDF report: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error generating PDF report")

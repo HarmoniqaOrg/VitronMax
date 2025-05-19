@@ -8,3 +8,57 @@
 2025-05-19 22:12:20.176 | INFO     | app.main:<module>:30 - Starting VitronMax in development environment
 2025-05-19 22:12:27.950 | INFO     | app.main:<module>:30 - Starting VitronMax in development environment
 2025-05-19 22:12:28.017 | INFO     | app.main:<module>:30 - Starting VitronMax in development environment
+2025-05-19 23:27:00.242 | INFO     | app.main:<module>:30 - Starting VitronMax in development environment
+2025-05-19 23:27:00.357 | INFO     | app.main:<module>:30 - Starting VitronMax in development environment
+2025-05-19 23:29:45.022 | INFO     | app.main:<module>:40 - Starting VitronMax in development environment
+2025-05-19 23:29:45.480 | INFO     | app.main:<module>:40 - Starting VitronMax in development environment
+2025-05-19 23:33:29.848 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:33:29.883 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:33:45.303 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:33:45.697 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:34:00.348 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:34:00.812 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:34:15.331 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:34:15.784 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:34:31.057 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:34:31.996 | INFO     | app.main:generate_report:262 - Generating PDF report for SMILES: CCO
+2025-05-19 23:34:31.996 | ERROR    | app.main:generate_report:285 - Error generating PDF report: "Style 'Title' already defined in stylesheet"
+2025-05-19 23:35:00.320 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:35:00.746 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:35:15.330 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:35:15.755 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:35:30.318 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:35:30.783 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:35:45.411 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:35:45.785 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:36:00.306 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:36:00.726 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:36:15.340 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:36:15.826 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:37:23.747 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:37:24.712 | INFO     | app.main:generate_report:262 - Generating PDF report for SMILES: CCO
+2025-05-19 23:37:24.713 | ERROR    | app.main:generate_report:285 - Error generating PDF report: 'BBBPredictor' object has no attribute 'version'
+2025-05-19 23:39:00.562 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:39:00.959 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:39:03.275 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:39:04.219 | INFO     | app.main:generate_report:262 - Generating PDF report for SMILES: CCO
+2025-05-19 23:39:04.219 | ERROR    | app.main:generate_report:285 - Error generating PDF report: 'BBBPredictor' object has no attribute 'version'
+2025-05-19 23:45:30.619 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:45:31.052 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:48:00.721 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:48:01.348 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:48:15.827 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:48:16.305 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:49:15.806 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:49:16.197 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:49:17.939 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:49:18.269 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:49:45.816 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:49:46.284 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:50:00.710 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:50:01.182 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:50:16.250 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:50:30.796 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:50:31.331 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:51:00.753 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-19 23:51:01.349 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
