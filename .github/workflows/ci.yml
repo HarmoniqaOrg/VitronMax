@@ -41,7 +41,8 @@ jobs:
           
       - name: Test with pytest
         run: |
-          pytest --cov=app tests/
+          # Add current directory to Python path to find app module
+          PYTHONPATH=. pytest --cov=app tests/
           
       - name: Build Docker image
         run: |
