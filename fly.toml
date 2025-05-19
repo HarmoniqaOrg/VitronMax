@@ -1,0 +1,41 @@
+# fly.toml app configuration file generated for vitronmax on 2025-05-19T22:21:31+02:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'vitronmax'
+primary_region = 'fra'
+kill_signal = 'SIGINT'
+kill_timeout = '5s'
+
+[build]
+  dockerfile = 'Dockerfile'
+
+[env]
+  ENV = 'production'
+  LOG_LEVEL = 'INFO'
+  PORT = '8080'
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ['app']
+
+  [[http_service.checks]]
+    interval = "30s"
+    timeout = "10s"
+    grace_period = "30s"
+    method = "GET"
+    path = "/"
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
+
+[[metrics]]
+  port = 8080
+  path = '/metrics'
