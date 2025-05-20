@@ -1,9 +1,6 @@
 """Supabase integration for VitronMax."""
-from typing import Dict, Optional, Any, List
-import uuid
-import io
+from typing import Dict, Optional, Any
 import datetime
-from pathlib import Path
 
 import httpx
 from loguru import logger
@@ -493,7 +490,6 @@ class SupabaseClient:
                     
                 # Generate signed URL for the file
                 expiry = datetime.datetime.now() + datetime.timedelta(seconds=URL_EXPIRY_SECONDS)
-                expiry_str = expiry.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
                 
                 signed_url_params = {
                     "expiresIn": URL_EXPIRY_SECONDS

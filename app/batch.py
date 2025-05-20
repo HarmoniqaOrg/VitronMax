@@ -1,21 +1,22 @@
 """
 Module for handling batch prediction operations for CSV files.
 """
-import asyncio
 import csv
-import io
-import tempfile
+import asyncio
 import uuid
+import io
 from datetime import datetime
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Any, Tuple
 
-from fastapi import UploadFile
 from loguru import logger
+from fastapi import UploadFile, HTTPException
 
-from app.config import settings
-from app.db import supabase
-from app.models import BatchPredictionStatus
+from app.models import (
+    BatchPredictionStatus,
+    BatchPredictionResponse
+)
 from app.predict import BBBPredictor
+from app.db import supabase
 
 
 class BatchProcessor:

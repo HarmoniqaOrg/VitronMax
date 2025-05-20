@@ -2,19 +2,14 @@
 VitronMax API - a service for BBB permeability prediction.
 """
 import logging
-import csv
-import io
-import uuid
-import os
 import asyncio
-from pathlib import Path
 from datetime import datetime
-from typing import Dict, Union, Any, List, Optional
+from typing import Dict, Optional
 
-from fastapi import FastAPI, HTTPException, Request, Depends, UploadFile, File, Query
-from fastapi import BackgroundTasks, status
+from fastapi import FastAPI, HTTPException, Request, Depends, UploadFile, File
+from fastapi import status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, Response, StreamingResponse, FileResponse, RedirectResponse
+from fastapi.responses import JSONResponse, StreamingResponse, RedirectResponse
 from loguru import logger
 
 from app.config import settings
@@ -275,8 +270,8 @@ async def download_results(job_id: str):
     except ValueError as e:
         logger.warning(f"Job not found: {job_id}")
         raise HTTPException(status_code=404, detail=f"Job not found: {job_id}")
-    except Exception as e:
-        logger.error(f"Error generating download: {str(e)}")
+    except Exception as exc:
+        logger.error(f"Error generating download: {str(exc)}")
         raise HTTPException(status_code=500, detail="Error generating download")
 
 
