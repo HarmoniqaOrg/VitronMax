@@ -22,8 +22,8 @@
 | 2025-05-20 | Create SQL schema definition file (#PRD-§3.6) | [PR #6](https://github.com/HarmoniqaOrg/VitronMax/pull/6) | ✅ Done (commit: abcdef1) | Added db/schema.sql for database schema documentation |
 | 2025-05-20 | Update documentation for new features (#PRD-§3.6, Global Rules #6) | [PR #6](https://github.com/HarmoniqaOrg/VitronMax/pull/6) | ✅ Done (commit: abcdef1) | Updated README.md and api-documentation.md with new functionality |
 | 2025-05-20 | Fix deployment to fly at merge | [PR #7](https://github.com/HarmoniqaOrg/VitronMax/pull/7) | ✅ Done (commit: abcdef1) | Updated fly.toml to use /healthz endpoint for health checks |
-| 2025-05-20 | Enable pytest-asyncio & un-skip async tests (#TechDebt-T1)        | [PR #X](https://github.com/HarmoniqaOrg/VitronMax/pull/X) | ✅ Done (commit: 0058590) | Fixed async test, addressed pytest-asyncio deprecation |
-| 2025-05-20 | Replace @app.on_event startup with lifespan handler (#TechDebt-T2)  | [PR #X](https://github.com/HarmoniqaOrg/VitronMax/pull/X) | ✅ Done (commit: 0058590) | Migrated to lifespan events, silenced FastAPI deprecation warn |
-| 2025-05-20 | Migrate Pydantic BaseSettings to ConfigDict (#TechDebt-T3)          | [PR #X](https://github.com/HarmoniqaOrg/VitronMax/pull/X) | ✅ Done (commit: 0058590) | Migrated to ConfigDict, fixed Pydantic deprecation warn |
+| 2025-05-20 | Enable pytest-asyncio & un-skip async tests (#TechDebt-T1)        | [PR #11](https://github.com/HarmoniqaOrg/VitronMax/pull/11) | ✅ Done (commit: eb7039e) | Fixed async test, addressed pytest-asyncio deprecation |
+| 2025-05-20 | Replace @app.on_event startup with lifespan handler (#TechDebt-T2)  | [PR #11](https://github.com/HarmoniqaOrg/VitronMax/pull/11) | ✅ Done (commit: eb7039e) | Migrated to lifespan events, silenced FastAPI deprecation warn |
+| 2025-05-20 | Migrate Pydantic BaseSettings to ConfigDict (#TechDebt-T3)          | [PR #11](https://github.com/HarmoniqaOrg/VitronMax/pull/11) | ✅ Done (commit: eb7039e) | Migrated to ConfigDict, fixed Pydantic deprecation warn |
 | 2025-05-20 | Implement real RDKit fingerprint extraction (#Feature-FPrint)       |         | ⏳     | update predict.py, add unit test            |
 | 2025-05-20 | CI: turn deprecation warnings into errors (#CI-Hardening)           |         | ⏳     | pytest -Werror::DeprecationWarning          |
