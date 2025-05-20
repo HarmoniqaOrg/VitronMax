@@ -21,7 +21,7 @@ class BBBPredictor:
     """Random-Forest BBB permeability predictor (Morgan FP 2–2048)."""
 
     def __init__(self, model_path: Path = MODEL_PATH) -> None:
-        self.model: Any = joblib.load(model_path)
+        self.model: Any = joblib.load(str(model_path))
         self.version: str = MODEL_VERSION
 
     # ---------- public API -------------------------------------------------

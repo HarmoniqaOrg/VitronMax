@@ -1,9 +1,10 @@
 """Supabase integration for VitronMax."""
 
-from typing import Dict, Optional, Any, Mapping, cast
+from typing import Dict, Optional, Any, Mapping, cast, Union
 
 import httpx
 from loguru import logger
+from typing_extensions import TypedDict
 
 from app.config import settings
 from app.models import BatchPredictionStatus
@@ -28,6 +29,32 @@ class SupabaseClient:
             )
         else:
             logger.info(f"Supabase client initialized with URL: {self.url}")
+            
+    def _create_headers(self, content_type: bool = False, prefer_minimal: bool = False) -> Dict[str, str]:
+        """Create properly typed headers for Supabase API requests.
+        
+        Args:
+            content_type: Whether to include Content-Type header
+            prefer_minimal: Whether to include Prefer: return=minimal header
+            
+        Returns:
+            Dictionary with properly typed headers
+        """
+        # Ensure self.key is always treated as str for type safety
+        api_key = self.key if self.key is not None else ""
+        
+        headers: Dict[str, str] = {
+            "apikey": api_key,
+            "Authorization": f"Bearer {api_key}"
+        }
+        
+        if content_type:
+            headers["Content-Type"] = "application/json"
+            
+        if prefer_minimal:
+            headers["Prefer"] = "return=minimal"
+            
+        return headers
 
     async def ensure_storage_bucket_exists(self) -> bool:
         """Ensure that the Supabase Storage bucket exists.
@@ -46,10 +73,7 @@ class SupabaseClient:
         try:
             # First check if the bucket exists
             async with httpx.AsyncClient() as client:
-                headers: Mapping[str, str] = {
-                    "apikey": self.key,
-                    "Authorization": f"Bearer {self.key}",
-                }
+                headers = self._create_headers()
 
                 # Get list of buckets
                 response = await client.get(
@@ -355,7 +379,7 @@ class SupabaseClient:
                     logger.error(
                         f"Failed to store batch prediction item: {response.status_code} {response.text}"
                     )
-                    return cast(str, response.text)
+                    return {"error": response.text}
 
                 return {"success": True}
 
@@ -380,7 +404,7 @@ class SupabaseClient:
 
         try:
             async with httpx.AsyncClient() as client:
-                headers = {
+                headers: Dict[str, str] = {
                     "apikey": self.key,
                     "Authorization": f"Bearer {self.key}",
                     "Content-Type": "application/json",
@@ -430,7 +454,7 @@ class SupabaseClient:
 
         try:
             async with httpx.AsyncClient() as client:
-                headers = {
+                headers: Dict[str, str] = {
                     "apikey": self.key,
                     "Authorization": f"Bearer {self.key}",
                     "Content-Type": "application/json",
@@ -503,7 +527,7 @@ class SupabaseClient:
 
             # Upload CSV content
             async with httpx.AsyncClient() as client:
-                headers = {
+                headers: Dict[str, str] = {
                     "apikey": self.key,
                     "Authorization": f"Bearer {self.key}",
                     "Content-Type": "text/csv",
