@@ -1,15 +1,18 @@
 # VitronMax
 
-In-silico Blood-Brain Barrier (BBB) permeability prediction API with Random Forest model, SwissADME panel, and PDF reporting.
+In-silico Blood-Brain Barrier (BBB) permeability prediction API with Random Forest model, batch processing, and PDF reporting.
 
 ## Overview
 
-VitronMax is a FastAPI-based service that predicts blood-brain barrier permeability for drug candidates using a trained random forest model. The API provides:
+VitronMax is a FastAPI-based service that predicts blood-brain barrier permeability for drug candidates using a trained random forest model based on Morgan fingerprints (2048 bits, radius 2). The API provides:
 
-- SMILES-based BBB permeability prediction
-- Logging and persistence through Supabase integration
+- SMILES-based BBB permeability prediction with Morgan fingerprints via RDKit
+- Batch processing of CSV files with asynchronous job tracking
+- PDF report generation with molecule visualization and interpretation
+- Data persistence through Supabase (PostgreSQL + Storage)
 - Containerized deployment with Docker
-- CI/CD through GitHub Actions
+- CI/CD through GitHub Actions with quality gates (mypy, ruff, black)
+- Health check endpoint for monitoring and deployment validation
 
 ## Getting Started
 
@@ -18,6 +21,9 @@ VitronMax is a FastAPI-based service that predicts blood-brain barrier permeabil
 - Python 3.10+
 - Docker
 - Git
+- RDKit dependencies (for local non-Docker development)
+  - On Ubuntu/Debian: `apt-get install libglib2.0-0 libxrender1 libsm6 libxext6`
+  - On macOS: `brew install cairo pango glib`
 
 ### Local Development
 
@@ -69,15 +75,73 @@ Detailed API documentation is available in the [api-documentation.md](./docs/api
 ### Key Endpoints
 
 - `GET /`: Service information
+- `GET /healthz`: Health check endpoint for monitoring
 - `POST /predict_fp`: Predict BBB permeability from SMILES string
+- `POST /batch_predict_csv`: Process a batch of SMILES from a CSV file
+- `GET /batch_status/{job_id}`: Check the status of a batch job
+- `GET /download/{job_id}`: Download batch prediction results
+- `POST /report`: Generate a PDF report for a single molecule
 
 ### Example Usage
 
+#### Single Molecule Prediction
 ```bash
 curl -X POST "http://localhost:8080/predict_fp" \
   -H "Content-Type: application/json" \
   -d '{"smi": "CC(=O)OC1=CC=CC=C1C(=O)O"}'
 ```
+
+#### Batch Processing
+```bash
+# Submit a batch prediction job
+curl -X POST "http://localhost:8080/batch_predict_csv" \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@molecules.csv" \
+  
+
+# Check job status
+curl -X GET "http://localhost:8080/batch_status/your-job-id"
+
+# Download results when job is completed
+curl -X GET "http://localhost:8080/download/your-job-id" -o results.csv
+```
+
+#### Generate PDF Report
+```bash
+curl -X POST "http://localhost:8080/report" \
+  -H "Content-Type: application/json" \
+  -d '{"smi": "CC(=O)OC1=CC=CC=C1C(=O)O"}' \
+  -o molecule_report.pdf
+```
+
+## Supabase Configuration
+
+### Storage Setup
+
+VitronMax uses Supabase Storage to reliably persist batch prediction results. The application will automatically create the required storage bucket (default name: `vitronmax`) on startup if it doesn't exist.
+
+To verify the Supabase Storage functionality:
+
+1. Ensure your `.env` file contains valid Supabase credentials:
+   ```
+   SUPABASE_URL=your_supabase_url_here
+   SUPABASE_SERVICE_KEY=your_supabase_service_key_here
+   STORAGE_BUCKET_NAME=vitronmax  # Optional, defaults to 'vitronmax'
+   ```
+
+2. Submit a batch prediction job with a CSV file containing SMILES strings
+
+3. Once the job completes, check the status endpoint - it should include a signed URL to download the results from Supabase Storage
+
+4. The download endpoint will automatically redirect to the Supabase Storage signed URL if available
+
+### Database Tables
+
+VitronMax requires the following Supabase tables. The schema is defined in `db/schema.sql`:
+
+- `predictions`: Stores individual prediction results
+- `batch_predictions`: Stores batch job metadata
+- `batch_prediction_items`: Stores individual results within a batch job
 
 ## Deployment
 

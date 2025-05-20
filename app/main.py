@@ -6,6 +6,7 @@ import csv
 import io
 import uuid
 import os
+import asyncio
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, Union, Any, List, Optional
@@ -13,7 +14,7 @@ from typing import Dict, Union, Any, List, Optional
 from fastapi import FastAPI, HTTPException, Request, Depends, UploadFile, File, Query
 from fastapi import BackgroundTasks, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, Response, StreamingResponse, FileResponse
+from fastapi.responses import JSONResponse, Response, StreamingResponse, FileResponse, RedirectResponse
 from loguru import logger
 
 from app.config import settings
@@ -52,6 +53,26 @@ app.add_middleware(
 )
 
 
+@app.on_event("startup")
+async def startup_event():
+    """Initialize necessary resources on startup."""
+    logger.info("Initializing application resources")
+    
+    # Ensure Supabase Storage bucket exists
+    if supabase.is_configured:
+        try:
+            logger.info("Checking Supabase Storage bucket")
+            bucket_exists = await supabase.ensure_storage_bucket_exists()
+            if bucket_exists:
+                logger.info("Supabase Storage bucket confirmed")
+            else:
+                logger.warning("Failed to confirm Supabase Storage bucket existence")
+        except Exception as e:
+            logger.error(f"Error checking Supabase Storage bucket: {str(e)}")
+            # Don't fail startup, just log the error
+            # The service can still operate with fallback to in-memory storage
+
+
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     """Global exception handler for unhandled exceptions."""
@@ -69,10 +90,15 @@ batch_processor = BatchProcessor(predictor)
 
 
 @app.get("/")
-async def root() -> Dict[str, str]:
+def root() -> Dict[str, str]:
     """Root endpoint that returns service information."""
-    logger.debug("Root endpoint called")
     return {"message": "Welcome to VitronMax API", "version": "1.0"}
+
+
+@app.get("/healthz", tags=["health"])
+async def health() -> Dict[str, str]:
+    """Health check endpoint for monitoring and deployment checks."""
+    return {"status": "ok"}
 
 
 @app.post("/predict_fp", response_model=PredictionResponse)
@@ -95,9 +121,10 @@ async def predict_fp(request: PredictionRequest) -> PredictionResponse:
         logger.info(f"Prediction for {request.smi}: {prob:.4f}")
         
         # Store the prediction in Supabase
-        # This is non-blocking, so it won't delay the response
-        supabase_task = supabase.store_prediction(request.smi, float(prob), predictor.version)
-        # We don't await this task, allowing it to run in the background
+        # Create a task but await it properly in the background
+        asyncio.create_task(
+            supabase.store_prediction(request.smi, float(prob), predictor.version)
+        )
         logger.debug(f"Initiated Supabase storage for prediction: {request.smi}")
         
         return PredictionResponse(prob=prob, version=predictor.version)
@@ -215,12 +242,19 @@ async def download_results(job_id: str):
                 detail=f"Cannot download results for incomplete job. Status: {job_status['status']}"
             )
         
-        # In a real implementation, this might fetch from a cloud storage service
-        # For this MVP, we're generating it from the in-memory results
+        # Check if we have a signed URL from Supabase Storage
+        result_url = job_status.get("result_url")
+        if result_url and result_url.startswith("http"):
+            logger.info(f"Redirecting to Supabase Storage URL for job {job_id}")
+            # Redirect to the Supabase Storage signed URL
+            return RedirectResponse(url=result_url)
+            
+        # Fall back to in-memory results if Supabase Storage URL is not available
         if "results" not in batch_processor.active_jobs[job_id]:
             logger.warning(f"Results not found for job {job_id}")
             raise HTTPException(status_code=404, detail="Results not found")
             
+        logger.info(f"Generating CSV from in-memory results for job {job_id}")
         results = batch_processor.active_jobs[job_id]["results"]
         csv_content = batch_processor._generate_results_csv(results)
         

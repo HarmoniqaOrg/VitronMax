@@ -16,8 +16,18 @@ Returns basic API information.
 }
 ```
 
+### GET /healthz
+Health check endpoint for monitoring systems and deployment validation. Returns a simple status response.
+
+**Response**:
+```json
+{
+  "status": "ok"
+}
+```
+
 ### POST /predict_fp
-Predicts blood-brain barrier permeability probability using Random Forest model.
+Predicts blood-brain barrier permeability probability using a Random Forest model trained on Morgan 2048-bit fingerprints (radius=2).
 
 **Request**:
 ```json
@@ -29,7 +39,7 @@ Predicts blood-brain barrier permeability probability using Random Forest model.
 **Response**:
 ```json
 {
-  "prob": 0.78,  // Probability of BBB permeability
+  "prob": 0.78,  // Probability of BBB permeability (0.0-1.0)
   "version": "1.0"  // Model version
 }
 ```
@@ -37,10 +47,9 @@ Predicts blood-brain barrier permeability probability using Random Forest model.
 **Error responses**:
 - 400: Invalid SMILES string
 - 422: Validation error (missing or empty SMILES)
-```
 
 ### POST /batch_predict_csv
-Process a batch of SMILES strings from a CSV file for BBB permeability prediction. This is an asynchronous operation that returns a job ID for tracking progress.
+Process a batch of SMILES strings from a CSV file for BBB permeability prediction. This is an asynchronous operation that returns a job ID for tracking progress. Results are persisted to Supabase Storage for reliability and can be retrieved even after service restarts.
 
 **Request**:
 - Multipart form with a CSV file upload

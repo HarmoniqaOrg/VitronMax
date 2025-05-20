@@ -222,17 +222,27 @@ class BatchProcessor:
             # Generate results CSV
             csv_content = self._generate_results_csv(results)
             
-            # In a real implementation, you would store this in cloud storage
-            # For MVP, we'll just keep it in memory
+            # Store results in Supabase Storage
+            result_url = None
+            if supabase.is_configured:
+                # Store CSV in Supabase Storage and get signed URL
+                logger.info(f"Storing batch results in Supabase Storage for job {job_id}")
+                result_url = await supabase.store_batch_result_csv(job_id, csv_content)
+                
+                if not result_url:
+                    logger.warning(f"Failed to store batch results in Supabase Storage for job {job_id}")
+                    # Fallback to in-memory storage for MVP
+                    result_url = f"/download/{job_id}"
+            else:
+                # Fallback to in-memory storage if Supabase is not configured
+                result_url = f"/download/{job_id}"
+            
+            # Save results in memory as fallback
+            job["results"] = results
             
             # Update job status to COMPLETED
             job["status"] = BatchPredictionStatus.COMPLETED.value
             job["completed_at"] = datetime.now().isoformat()
-            job["results"] = results
-            
-            # For demo, create a placeholder URL
-            # In production, this would be a real URL to download the results
-            result_url = f"/api/download/{job_id}"
             job["result_url"] = result_url
             
             # Update database

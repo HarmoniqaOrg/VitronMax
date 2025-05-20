@@ -1,12 +1,19 @@
 """Supabase integration for VitronMax."""
 from typing import Dict, Optional, Any, List
 import uuid
+import io
+import datetime
+from pathlib import Path
 
 import httpx
 from loguru import logger
 
 from app.config import settings
 from app.models import BatchPredictionStatus
+
+# Constants for Supabase Storage
+STORAGE_BATCH_RESULTS_PATH = "batch_results"
+URL_EXPIRY_SECONDS = 60 * 60 * 24 * 7  # 7 days
 
 
 class SupabaseClient:
@@ -22,6 +29,70 @@ class SupabaseClient:
             logger.warning("Supabase is not configured. Database operations will be skipped.")
         else:
             logger.info(f"Supabase client initialized with URL: {self.url}")
+            
+    async def ensure_storage_bucket_exists(self) -> bool:
+        """Ensure that the Supabase Storage bucket exists.
+        
+        This method checks if the storage bucket exists and creates it if it doesn't.
+        
+        Returns:
+            bool: True if the bucket exists or was created successfully, False otherwise
+        """
+        if not self.is_configured:
+            logger.debug("Skipping storage bucket check - Supabase not configured")
+            return False
+            
+        bucket_name = settings.STORAGE_BUCKET_NAME
+        
+        try:
+            # First check if the bucket exists
+            async with httpx.AsyncClient() as client:
+                headers = {
+                    "apikey": self.key,
+                    "Authorization": f"Bearer {self.key}"
+                }
+                
+                # Get list of buckets
+                response = await client.get(
+                    f"{self.url}/storage/v1/bucket",
+                    headers=headers,
+                    timeout=10.0
+                )
+                
+                if response.status_code == 200:
+                    buckets = response.json()
+                    bucket_exists = any(bucket["name"] == bucket_name for bucket in buckets)
+                    
+                    if bucket_exists:
+                        logger.info(f"Storage bucket '{bucket_name}' already exists")
+                        return True
+                    
+                    # Bucket doesn't exist, create it
+                    logger.info(f"Storage bucket '{bucket_name}' not found, creating it...")
+                    create_response = await client.post(
+                        f"{self.url}/storage/v1/bucket",
+                        headers=headers,
+                        json={
+                            "name": bucket_name,
+                            "public": False,  # Private bucket for security
+                            "file_size_limit": 5242880  # 5MB limit for CSV files
+                        },
+                        timeout=10.0
+                    )
+                    
+                    if create_response.status_code in (200, 201):
+                        logger.info(f"Successfully created storage bucket '{bucket_name}'")
+                        return True
+                    else:
+                        logger.error(f"Failed to create storage bucket: {create_response.text}")
+                        return False
+                else:
+                    logger.error(f"Failed to list storage buckets: {response.text}")
+                    return False
+                    
+        except Exception as e:
+            logger.error(f"Error checking/creating storage bucket: {str(e)}")
+            return False
     
     async def store_prediction(self, smiles: str, probability: float, model_version: str = "v1.0") -> Optional[Dict[str, Any]]:
         """Store a prediction in the Supabase database.
@@ -357,6 +428,105 @@ class SupabaseClient:
                     
         except Exception as e:
             logger.exception(f"Error marking batch job as failed: {e}")
+            return None
+
+    async def ensure_storage_bucket(self) -> bool:
+        """Ensure the storage bucket exists for batch results.
+        
+        Creates the bucket if it doesn't exist.
+        
+        Returns:
+            True if the bucket exists or was created, False otherwise
+        """
+        # This method is deprecated in favor of ensure_storage_bucket_exists
+        # Kept for backwards compatibility
+        return await self.ensure_storage_bucket_exists()
+
+    async def store_batch_result_csv(self, job_id: str, csv_content: str) -> Optional[str]:
+        """Store batch results in Supabase Storage and return a signed URL.
+        
+        Args:
+            job_id: UUID of the batch job
+            csv_content: CSV content as string
+            
+        Returns:
+            Signed URL for accessing the file or None if storage failed
+        """
+        if not self.is_configured:
+            logger.debug("Skipping batch result storage - Supabase not configured")
+            return None
+            
+        try:
+            # Ensure storage bucket exists
+            bucket_exists = await self.ensure_storage_bucket()
+            if not bucket_exists:
+                logger.error("Failed to ensure storage bucket exists")
+                return None
+                
+            # File path in storage
+            file_path = f"{STORAGE_BATCH_RESULTS_PATH}/{job_id}.csv"
+            
+            # Upload CSV content
+            async with httpx.AsyncClient() as client:
+                headers = {
+                    "apikey": self.key,
+                    "Authorization": f"Bearer {self.key}",
+                    "Content-Type": "text/csv"
+                }
+                
+                # Convert CSV string to bytes
+                csv_bytes = csv_content.encode('utf-8')
+                
+                bucket_name = settings.STORAGE_BUCKET_NAME
+            
+                # Upload the file
+                upload_response = await client.post(
+                    f"{self.url}/storage/v1/object/{bucket_name}/{file_path}",
+                    headers=headers,
+                    content=csv_bytes,
+                    timeout=10.0  # Longer timeout for file upload
+                )
+                
+                if upload_response.status_code not in (200, 201):
+                    logger.error(f"Failed to upload batch results: {upload_response.status_code} {upload_response.text}")
+                    return None
+                    
+                # Generate signed URL for the file
+                expiry = datetime.datetime.now() + datetime.timedelta(seconds=URL_EXPIRY_SECONDS)
+                expiry_str = expiry.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+                
+                signed_url_params = {
+                    "expiresIn": URL_EXPIRY_SECONDS
+                }
+                
+                bucket_name = settings.STORAGE_BUCKET_NAME
+                
+                signed_url_response = await client.post(
+                    f"{self.url}/storage/v1/object/sign/{bucket_name}/{file_path}",
+                    headers={
+                        "apikey": self.key,
+                        "Authorization": f"Bearer {self.key}",
+                        "Content-Type": "application/json"
+                    },
+                    json=signed_url_params,
+                    timeout=5.0
+                )
+                
+                if signed_url_response.status_code in (200, 201):
+                    result = signed_url_response.json()
+                    signed_url = result.get("signedURL")
+                    if signed_url:
+                        # If URL doesn't include the base, prepend it
+                        if not signed_url.startswith("http"):
+                            signed_url = f"{self.url}{signed_url}"
+                        logger.info(f"Generated signed URL for batch results {job_id}")
+                        return signed_url
+                        
+                logger.error(f"Failed to generate signed URL: {signed_url_response.status_code} {signed_url_response.text}")
+                return None
+                    
+        except Exception as e:
+            logger.exception(f"Error storing batch results: {e}")
             return None
 
 

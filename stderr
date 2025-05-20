@@ -62,3 +62,162 @@
 2025-05-19 23:50:31.331 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
 2025-05-19 23:51:00.753 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
 2025-05-19 23:51:01.349 | INFO     | app.main:<module>:37 - Starting VitronMax in development environment
+2025-05-20 10:21:49.987 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:22:04.885 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:22:05.816 | INFO     | app.main:predict_fp:97 - Processing prediction request for SMILES: CCO
+2025-05-20 10:22:05.912 | INFO     | app.main:predict_fp:101 - Prediction for CCO: 0.7959
+2025-05-20 10:22:18.201 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:22:18.227 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:22:26.099 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:22:27.066 | INFO     | app.main:batch_predict_csv:136 - Received batch prediction request with file: test.csv
+2025-05-20 10:22:27.067 | WARNING  | app.main:batch_predict_csv:156 - Invalid batch request: 1 validation error for BatchPredictionResponse
+id
+  Input should be a valid UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `t` at 1 [type=uuid_parsing, input_value='test-job-123', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/uuid_parsing
+2025-05-20 10:22:27.349 | INFO     | app.main:batch_predict_csv:136 - Received batch prediction request with file: invalid.csv
+2025-05-20 10:22:27.349 | WARNING  | app.main:batch_predict_csv:156 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-20 10:22:27.354 | INFO     | app.main:get_batch_status:176 - Checking status for batch job: test-job-456
+2025-05-20 10:22:27.355 | WARNING  | app.main:get_batch_status:192 - Job not found: test-job-456
+2025-05-20 10:22:27.363 | INFO     | app.main:get_batch_status:176 - Checking status for batch job: nonexistent-job
+2025-05-20 10:22:27.363 | WARNING  | app.main:get_batch_status:192 - Job not found: nonexistent-job
+2025-05-20 10:22:27.368 | INFO     | app.main:download_results:212 - Download request for batch job: test-job-789
+2025-05-20 10:22:27.373 | INFO     | app.main:download_results:212 - Download request for batch job: test-job-pending
+2025-05-20 10:22:27.373 | WARNING  | app.main:download_results:219 - Cannot download results for job test-job-pending: Job not completed
+2025-05-20 10:22:27.373 | ERROR    | app.main:download_results:252 - Error generating download: 
+2025-05-20 10:22:27.384 | INFO     | app.main:predict_fp:97 - Processing prediction request for SMILES: CCO
+2025-05-20 10:22:27.471 | INFO     | app.main:predict_fp:101 - Prediction for CCO: 0.7959
+2025-05-20 10:22:27.505 | INFO     | app.main:generate_report:269 - Generating PDF report for SMILES: CCO
+2025-05-20 10:22:47.591 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:22:48.063 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:23:02.606 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:23:03.055 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:23:32.560 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:23:33.118 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:24:00.186 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:24:01.152 | INFO     | app.main:batch_predict_csv:136 - Received batch prediction request with file: test.csv
+2025-05-20 10:24:01.152 | WARNING  | app.main:batch_predict_csv:156 - Invalid batch request: 1 validation error for BatchPredictionResponse
+id
+  Input should be a valid UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `t` at 1 [type=uuid_parsing, input_value='test-job-123', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/uuid_parsing
+2025-05-20 10:24:01.448 | INFO     | app.main:batch_predict_csv:136 - Received batch prediction request with file: invalid.csv
+2025-05-20 10:24:01.448 | WARNING  | app.main:batch_predict_csv:156 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-20 10:24:01.453 | INFO     | app.main:get_batch_status:176 - Checking status for batch job: test-job-456
+2025-05-20 10:24:01.454 | WARNING  | app.main:get_batch_status:192 - Job not found: test-job-456
+2025-05-20 10:24:01.461 | INFO     | app.main:get_batch_status:176 - Checking status for batch job: nonexistent-job
+2025-05-20 10:24:01.461 | WARNING  | app.main:get_batch_status:192 - Job not found: nonexistent-job
+2025-05-20 10:24:01.466 | INFO     | app.main:download_results:212 - Download request for batch job: test-job-789
+2025-05-20 10:24:01.473 | INFO     | app.main:download_results:212 - Download request for batch job: test-job-pending
+2025-05-20 10:24:01.473 | WARNING  | app.main:download_results:219 - Cannot download results for job test-job-pending: Job not completed
+2025-05-20 10:24:01.473 | ERROR    | app.main:download_results:252 - Error generating download: 
+2025-05-20 10:24:01.482 | INFO     | app.main:predict_fp:97 - Processing prediction request for SMILES: CCO
+2025-05-20 10:24:01.574 | INFO     | app.main:predict_fp:101 - Prediction for CCO: 0.7959
+2025-05-20 10:24:02.715 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:24:03.156 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:25:02.638 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:25:03.186 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:25:32.717 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:25:33.157 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:25:47.697 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:25:48.126 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:25:56.561 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:25:57.826 | INFO     | app.main:batch_predict_csv:136 - Received batch prediction request with file: invalid.csv
+2025-05-20 10:25:57.826 | WARNING  | app.main:batch_predict_csv:156 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-20 10:25:57.831 | INFO     | app.main:get_batch_status:176 - Checking status for batch job: test-job-456
+2025-05-20 10:25:57.831 | ERROR    | app.main:get_batch_status:195 - Error checking job status: 'total_molecules'
+2025-05-20 10:25:57.838 | INFO     | app.main:get_batch_status:176 - Checking status for batch job: nonexistent-job
+2025-05-20 10:25:57.840 | WARNING  | app.main:get_batch_status:192 - Job not found: nonexistent-job
+2025-05-20 10:25:57.844 | INFO     | app.main:download_results:212 - Download request for batch job: test-job-789
+2025-05-20 10:25:57.849 | INFO     | app.main:download_results:212 - Download request for batch job: test-job-pending
+2025-05-20 10:25:57.850 | WARNING  | app.main:download_results:219 - Cannot download results for job test-job-pending: Job not completed
+2025-05-20 10:25:57.850 | ERROR    | app.main:download_results:252 - Error generating download: 
+2025-05-20 10:25:57.858 | INFO     | app.main:predict_fp:97 - Processing prediction request for SMILES: CCO
+2025-05-20 10:25:57.947 | INFO     | app.main:predict_fp:101 - Prediction for CCO: 0.7959
+2025-05-20 10:25:57.999 | INFO     | app.main:generate_report:269 - Generating PDF report for SMILES: CCO
+2025-05-20 10:26:32.719 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:26:33.283 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:26:35.948 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:26:36.891 | INFO     | app.main:batch_predict_csv:136 - Received batch prediction request with file: invalid.csv
+2025-05-20 10:26:36.891 | WARNING  | app.main:batch_predict_csv:156 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-20 10:26:36.899 | INFO     | app.main:get_batch_status:176 - Checking status for batch job: nonexistent-job
+2025-05-20 10:26:36.899 | WARNING  | app.main:get_batch_status:192 - Job not found: nonexistent-job
+2025-05-20 10:26:36.904 | INFO     | app.main:download_results:212 - Download request for batch job: test-job-789
+2025-05-20 10:26:36.909 | INFO     | app.main:download_results:212 - Download request for batch job: test-job-pending
+2025-05-20 10:26:36.910 | WARNING  | app.main:download_results:219 - Cannot download results for job test-job-pending: Job not completed
+2025-05-20 10:26:36.910 | ERROR    | app.main:download_results:252 - Error generating download: 
+2025-05-20 10:26:36.918 | INFO     | app.main:predict_fp:97 - Processing prediction request for SMILES: CCO
+2025-05-20 10:26:37.012 | INFO     | app.main:predict_fp:101 - Prediction for CCO: 0.7959
+2025-05-20 10:26:37.054 | INFO     | app.main:generate_report:269 - Generating PDF report for SMILES: CCO
+2025-05-20 10:34:33.017 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:34:33.591 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:41:57.006 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:41:57.055 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:41:57.825 | INFO     | app.main:startup_event:59 - Initializing application resources
+2025-05-20 10:41:57.825 | INFO     | app.main:startup_event:64 - Checking Supabase Storage bucket
+2025-05-20 10:41:57.850 | INFO     | app.main:startup_event:59 - Initializing application resources
+2025-05-20 10:41:57.850 | INFO     | app.main:startup_event:64 - Checking Supabase Storage bucket
+2025-05-20 10:41:58.160 | INFO     | app.db:ensure_storage_bucket_exists:70 - Storage bucket 'vitronmax' not found, creating it...
+2025-05-20 10:41:58.213 | INFO     | app.db:ensure_storage_bucket_exists:70 - Storage bucket 'vitronmax' not found, creating it...
+2025-05-20 10:41:58.257 | INFO     | app.db:ensure_storage_bucket_exists:83 - Successfully created storage bucket 'vitronmax'
+2025-05-20 10:41:58.257 | INFO     | app.main:startup_event:67 - Supabase Storage bucket confirmed
+2025-05-20 10:41:58.330 | ERROR    | app.db:ensure_storage_bucket_exists:86 - Failed to create storage bucket: {"statusCode":"409","error":"Duplicate","message":"The resource already exists"}
+2025-05-20 10:41:58.330 | WARNING  | app.main:startup_event:69 - Failed to confirm Supabase Storage bucket existence
+2025-05-20 10:42:48.295 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:42:48.718 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:42:49.116 | INFO     | app.main:startup_event:59 - Initializing application resources
+2025-05-20 10:42:49.116 | INFO     | app.main:startup_event:64 - Checking Supabase Storage bucket
+2025-05-20 10:42:49.308 | INFO     | app.db:ensure_storage_bucket_exists:66 - Storage bucket 'vitronmax' already exists
+2025-05-20 10:42:49.308 | INFO     | app.main:startup_event:67 - Supabase Storage bucket confirmed
+2025-05-20 10:42:49.528 | INFO     | app.main:startup_event:59 - Initializing application resources
+2025-05-20 10:42:49.528 | INFO     | app.main:startup_event:64 - Checking Supabase Storage bucket
+2025-05-20 10:42:49.703 | INFO     | app.db:ensure_storage_bucket_exists:66 - Storage bucket 'vitronmax' already exists
+2025-05-20 10:42:49.704 | INFO     | app.main:startup_event:67 - Supabase Storage bucket confirmed
+2025-05-20 10:43:03.245 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:43:03.743 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:43:04.064 | INFO     | app.main:startup_event:59 - Initializing application resources
+2025-05-20 10:43:04.064 | INFO     | app.main:startup_event:64 - Checking Supabase Storage bucket
+2025-05-20 10:43:04.453 | INFO     | app.db:ensure_storage_bucket_exists:66 - Storage bucket 'vitronmax' already exists
+2025-05-20 10:43:04.454 | INFO     | app.main:startup_event:67 - Supabase Storage bucket confirmed
+2025-05-20 10:43:04.566 | INFO     | app.main:startup_event:59 - Initializing application resources
+2025-05-20 10:43:04.566 | INFO     | app.main:startup_event:64 - Checking Supabase Storage bucket
+2025-05-20 10:43:04.754 | INFO     | app.db:ensure_storage_bucket_exists:66 - Storage bucket 'vitronmax' already exists
+2025-05-20 10:43:04.754 | INFO     | app.main:startup_event:67 - Supabase Storage bucket confirmed
+2025-05-20 10:43:33.376 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:43:33.808 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:43:34.182 | INFO     | app.main:startup_event:59 - Initializing application resources
+2025-05-20 10:43:34.182 | INFO     | app.main:startup_event:64 - Checking Supabase Storage bucket
+2025-05-20 10:43:34.402 | ERROR    | app.db:ensure_storage_bucket_exists:92 - Error checking/creating storage bucket: name 'STORAGE_BUCKET_NAME' is not defined
+2025-05-20 10:43:34.402 | WARNING  | app.main:startup_event:69 - Failed to confirm Supabase Storage bucket existence
+2025-05-20 10:43:34.622 | INFO     | app.main:startup_event:59 - Initializing application resources
+2025-05-20 10:43:34.622 | INFO     | app.main:startup_event:64 - Checking Supabase Storage bucket
+2025-05-20 10:43:34.790 | ERROR    | app.db:ensure_storage_bucket_exists:92 - Error checking/creating storage bucket: name 'STORAGE_BUCKET_NAME' is not defined
+2025-05-20 10:43:34.790 | WARNING  | app.main:startup_event:69 - Failed to confirm Supabase Storage bucket existence
+2025-05-20 10:43:48.341 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:43:48.824 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:43:49.168 | INFO     | app.main:startup_event:59 - Initializing application resources
+2025-05-20 10:43:49.168 | INFO     | app.main:startup_event:64 - Checking Supabase Storage bucket
+2025-05-20 10:43:49.647 | INFO     | app.main:startup_event:59 - Initializing application resources
+2025-05-20 10:43:49.647 | INFO     | app.main:startup_event:64 - Checking Supabase Storage bucket
+2025-05-20 10:43:49.789 | ERROR    | app.db:ensure_storage_bucket_exists:92 - Error checking/creating storage bucket: name 'STORAGE_BUCKET_NAME' is not defined
+2025-05-20 10:43:49.789 | WARNING  | app.main:startup_event:69 - Failed to confirm Supabase Storage bucket existence
+2025-05-20 10:43:50.129 | ERROR    | app.db:ensure_storage_bucket_exists:92 - Error checking/creating storage bucket: name 'STORAGE_BUCKET_NAME' is not defined
+2025-05-20 10:43:50.129 | WARNING  | app.main:startup_event:69 - Failed to confirm Supabase Storage bucket existence
+2025-05-20 10:44:18.332 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:44:18.781 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:44:19.228 | INFO     | app.main:startup_event:59 - Initializing application resources
+2025-05-20 10:44:19.228 | INFO     | app.main:startup_event:64 - Checking Supabase Storage bucket
+2025-05-20 10:44:19.460 | INFO     | app.db:ensure_storage_bucket_exists:67 - Storage bucket 'vitronmax' already exists
+2025-05-20 10:44:19.460 | INFO     | app.main:startup_event:67 - Supabase Storage bucket confirmed
+2025-05-20 10:44:19.650 | INFO     | app.main:startup_event:59 - Initializing application resources
+2025-05-20 10:44:19.650 | INFO     | app.main:startup_event:64 - Checking Supabase Storage bucket
+2025-05-20 10:44:19.846 | INFO     | app.db:ensure_storage_bucket_exists:67 - Storage bucket 'vitronmax' already exists
+2025-05-20 10:44:19.846 | INFO     | app.main:startup_event:67 - Supabase Storage bucket confirmed
+2025-05-20 10:44:48.382 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:44:48.780 | INFO     | app.main:<module>:38 - Starting VitronMax in development environment
+2025-05-20 10:44:49.208 | INFO     | app.main:startup_event:59 - Initializing application resources
+2025-05-20 10:44:49.208 | INFO     | app.main:startup_event:64 - Checking Supabase Storage bucket
+2025-05-20 10:44:49.476 | INFO     | app.db:ensure_storage_bucket_exists:67 - Storage bucket 'vitronmax' already exists
+2025-05-20 10:44:49.476 | INFO     | app.main:startup_event:67 - Supabase Storage bucket confirmed
+2025-05-20 10:44:49.577 | INFO     | app.main:startup_event:59 - Initializing application resources
+2025-05-20 10:44:49.577 | INFO     | app.main:startup_event:64 - Checking Supabase Storage bucket
+2025-05-20 10:44:49.765 | INFO     | app.db:ensure_storage_bucket_exists:67 - Storage bucket 'vitronmax' already exists
+2025-05-20 10:44:49.766 | INFO     | app.main:startup_event:67 - Supabase Storage bucket confirmed
