@@ -224,8 +224,8 @@ async def get_batch_status(job_id: str) -> BatchPredictionStatusResponse:
         raise HTTPException(status_code=500, detail="Error checking job status")
 
 
-@app.get("/download/{job_id}")
-async def download_results(job_id: str) -> StreamingResponse | RedirectResponse:
+@app.get("/download/{job_id}", response_model=None)
+async def download_results(job_id: str):
     """Download the results of a batch prediction job as a CSV file.
 
     Args:
@@ -288,8 +288,8 @@ async def download_results(job_id: str) -> StreamingResponse | RedirectResponse:
         raise HTTPException(status_code=500, detail="Error generating download")
 
 
-@app.post("/report")
-async def generate_report(request: PredictionRequest) -> StreamingResponse:
+@app.post("/report", response_model=None)
+async def generate_report(request: PredictionRequest):
     """Generate a PDF report for a molecule based on its SMILES string.
 
     Args:
