@@ -51,7 +51,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - uses: superfly/flyctl-actions@1.5
+      - uses: superfly/flyctl-actions@v1.9
       
       - name: Deploy to Fly.io
         run: flyctl deploy
