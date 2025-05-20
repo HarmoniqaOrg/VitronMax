@@ -8,7 +8,7 @@ from app.main import app
 client = TestClient(app)
 
 
-def test_health_check():
+def test_health_check() -> None:
     """Test the health check endpoint returns status ok."""
     response = client.get("/healthz")
     assert response.status_code == 200

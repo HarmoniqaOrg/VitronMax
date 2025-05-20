@@ -13,7 +13,7 @@ from app.models import BatchPredictionStatus
 client = TestClient(app)
 
 
-def test_batch_predict_csv_valid():
+def test_batch_predict_csv_valid() -> None:
     """Test batch prediction with valid CSV file."""
     # Create a test CSV file with header and valid SMILES
     csv_content = "SMILES\nCCO\nCC(=O)OC1=CC=CC=C1C(=O)O\nC1CCCCC1"
@@ -59,7 +59,7 @@ def test_batch_predict_csv_valid():
         mock_start_job.assert_called_once()
 
 
-def test_batch_predict_csv_invalid():
+def test_batch_predict_csv_invalid() -> None:
     """Test batch prediction with invalid CSV file."""
     # Create an invalid CSV file (no SMILES column)
     csv_content = "Molecule,MW\nEthanol,46.07\nAspirin,180.16"
@@ -81,7 +81,7 @@ def test_batch_predict_csv_invalid():
         assert "Could not find SMILES column" in response.json()["detail"]
 
 
-def test_batch_status_valid():
+def test_batch_status_valid() -> None:
     """Test batch status endpoint with valid job ID."""
     job_id = "test-job-456"
 
@@ -110,7 +110,7 @@ def test_batch_status_valid():
         assert data["progress"] == 33.3
 
 
-def test_batch_status_invalid():
+def test_batch_status_invalid() -> None:
     """Test batch status endpoint with invalid job ID."""
     job_id = "nonexistent-job"
 
@@ -126,7 +126,7 @@ def test_batch_status_invalid():
         assert "not found" in response.json()["detail"]
 
 
-def test_download_results_valid():
+def test_download_results_valid() -> None:
     """Test download endpoint with valid completed job."""
     job_id = "test-job-789"
 
@@ -175,7 +175,7 @@ def test_download_results_valid():
         assert "C1CCCCC1,0.85,1.0," in content
 
 
-def test_download_results_not_completed():
+def test_download_results_not_completed() -> None:
     """Test download endpoint with job that is not yet completed."""
     job_id = "test-job-pending"
 
@@ -201,7 +201,7 @@ def test_download_results_not_completed():
 
 
 @pytest.mark.asyncio
-async def test_supabase_storage_batch_results():
+async def test_supabase_storage_batch_results() -> None:
     """Test that batch results are properly stored in Supabase Storage."""
     job_id = "test-storage-job-123"
     test_signed_url = (
@@ -258,10 +258,43 @@ async def test_supabase_storage_batch_results():
 
 
 @pytest.mark.asyncio
-async def test_get_batch_status_not_found():
-    pass
+async def test_get_batch_status_not_found() -> None:
+    """Test that get_job_status raises ValueError for a non-existent job ID."""
+    with pytest.raises(ValueError, match=r"Job fake-id-does-not-exist not found"):
+        batch_processor.get_job_status("fake-id-does-not-exist")
 
 
 @pytest.mark.asyncio
-async def test_get_batch_status_completed():
-    pass
+async def test_get_batch_status_completed() -> None:
+    """Test get_job_status for a completed job."""
+    job_id = "completed-job-for-status-test"
+    # Mock a completed job in active_jobs
+    batch_processor.active_jobs[job_id] = {
+        "id": job_id,
+        "status": BatchPredictionStatus.COMPLETED.value,
+        "filename": "completed_test.csv",
+        "total_molecules": 1,
+        "processed_molecules": 1,
+        "created_at": "2023-10-26T10:00:00",
+        "completed_at": "2023-10-26T10:05:00",
+        "result_url": "http://example.com/results/completed_test.csv",
+        "error_message": None,
+        "results": [  # Add some mock results
+            {
+                "smiles": "CCO",
+                "probability": 0.88,
+                "model_version": "1.0.0",
+                "error": None,
+            }
+        ],
+    }
+
+    status = batch_processor.get_job_status(job_id)
+
+    assert status is not None
+    assert status["id"] == job_id
+    assert status["status"] == BatchPredictionStatus.COMPLETED.value
+    assert status["result_url"] == "http://example.com/results/completed_test.csv"
+
+    # Clean up the mocked job
+    del batch_processor.active_jobs[job_id]
