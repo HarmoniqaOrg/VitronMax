@@ -26,7 +26,7 @@
 | 2025-05-20 | Replace @app.on_event startup with lifespan handler (#TechDebt-T2)  | [PR #11](https://github.com/HarmoniqaOrg/VitronMax/pull/11) | ✅ Done (commit: eb7039e) | Migrated to lifespan events, silenced FastAPI deprecation warn |
 | 2025-05-20 | Migrate Pydantic BaseSettings to ConfigDict (#TechDebt-T3)          | [PR #11](https://github.com/HarmoniqaOrg/VitronMax/pull/11) | ✅ Done (commit: eb7039e) | Migrated to ConfigDict, fixed Pydantic deprecation warn |
 | 2025-05-20 | Convert fingerprint to NumPy array & add unit test (#PRD-§3.1, #TechDebt-T4) | [PR #12](https://github.com/HarmoniqaOrg/VitronMax/pull/12) | ✅ Done (commit: [hash_here]) | Fingerprint extraction now uses `np.ndarray[np.int8]`. |
-| 2025-05-20 | Resolve Mypy errors & Harden CI (Global Rules #1, #5) | [PR #13](https://github.com/HarmoniqaOrg/VitronMax/pull/13) | ✅ Done (commit: [pending_commit]) | All Mypy errors fixed. CI: DeprecationWarnings as errors, action version pinned. |
+| 2025-05-20 | Resolve Mypy errors & Harden CI (Global Rules #1, #5) | [PR #13](https://github.com/HarmoniqaOrg/VitronMax/pull/13) | ✅ Done (commit: dc1389f) | All Mypy errors fixed. CI: DeprecationWarnings as errors, action version pinned, code auto-formatted. |
 | 2025-05-20 | Un-skip remaining batch tests (test_batch_predict_csv_valid, test_batch_status_valid) (#TechDebt-T1 P0) | [PR #XX](...) | ⏳ | Deferred from initial async test work. |
 | 2025-05-20 | Secrets / env audit (#Infra-S1 P1) | [PR #XX](...) | ⏳ | Ensure STORAGE_BUCKET_NAME clear in .env.example & document required GitHub secrets. |
 | 2025-05-20 | CI: Configure pytest to fail on skipped tests (#CI-S1 P1) | [PR #XX](...) | ⏳ | Make CI more strict regarding skipped tests. |
