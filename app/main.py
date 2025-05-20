@@ -62,7 +62,7 @@ async def startup_event() -> None:
     if supabase.is_configured:
         try:
             logger.info("Checking Supabase Storage bucket")
-            bucket_exists = await supabase.ensure_storage_bucket_exists()
+            bucket_exists = await supabase.ensure_storage_bucket()
             if bucket_exists:
                 logger.info("Supabase Storage bucket confirmed")
             else:
