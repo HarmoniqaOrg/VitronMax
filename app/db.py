@@ -1,10 +1,9 @@
 """Supabase integration for VitronMax."""
 
-from typing import Dict, Optional, Any, Mapping, cast, Union
+from typing import Dict, Optional, Any, cast
 
 import httpx
 from loguru import logger
-from typing_extensions import TypedDict
 
 from app.config import settings
 from app.models import BatchPredictionStatus
