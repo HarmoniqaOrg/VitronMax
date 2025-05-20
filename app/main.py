@@ -5,7 +5,8 @@ VitronMax API - a service for BBB permeability prediction.
 import logging
 import asyncio
 from datetime import datetime
-from typing import Dict, Union
+from typing import Dict, Union, AsyncGenerator
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Request, Depends, UploadFile, File
 from fastapi import status
@@ -37,10 +38,38 @@ logger.add(
 
 logger.info(f"Starting VitronMax in {settings.ENV.value} environment")
 
+
+@asynccontextmanager
+async def lifespan(app_instance: FastAPI) -> AsyncGenerator[None, None]:
+    """Manage application startup and shutdown events."""
+    logger.info("Initializing application resources (lifespan startup)")
+
+    # Ensure Supabase Storage bucket exists
+    if supabase.is_configured:
+        try:
+            logger.info("Checking Supabase Storage bucket (lifespan)")
+            bucket_exists = await supabase.ensure_storage_bucket()
+            if bucket_exists:
+                logger.info("Supabase Storage bucket confirmed (lifespan)")
+            else:
+                logger.warning(
+                    "Failed to confirm Supabase Storage bucket existence (lifespan)"
+                )
+        except Exception as e:
+            logger.error(f"Error checking Supabase Storage bucket (lifespan): {str(e)}")
+            # Don't fail startup, just log the error
+
+    yield
+
+    # Shutdown logic would go here, if any
+    logger.info("Application shutdown (lifespan)")
+
+
 app = FastAPI(
     title="VitronMax",
     description="API for blood-brain barrier permeability prediction",
     version="1.0.0",
+    lifespan=lifespan,  # Pass lifespan to the constructor
 )
 
 # Add CORS middleware
@@ -51,26 +80,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-@app.on_event("startup")
-async def startup_event() -> None:
-    """Initialize necessary resources on startup."""
-    logger.info("Initializing application resources")
-
-    # Ensure Supabase Storage bucket exists
-    if supabase.is_configured:
-        try:
-            logger.info("Checking Supabase Storage bucket")
-            bucket_exists = await supabase.ensure_storage_bucket()
-            if bucket_exists:
-                logger.info("Supabase Storage bucket confirmed")
-            else:
-                logger.warning("Failed to confirm Supabase Storage bucket existence")
-        except Exception as e:
-            logger.error(f"Error checking Supabase Storage bucket: {str(e)}")
-            # Don't fail startup, just log the error
-            # The service can still operate with fallback to in-memory storage
 
 
 @app.exception_handler(Exception)

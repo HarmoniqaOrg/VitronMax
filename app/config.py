@@ -4,7 +4,7 @@ from enum import Enum
 from typing import Optional
 
 from pydantic import field_validator
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Environment(str, Enum):
@@ -47,12 +47,11 @@ class Settings(BaseSettings):
             valid_values = ", ".join([e.value for e in Environment])
             raise ValueError(f"ENV must be one of: {valid_values}")
 
-    class Config:
-        """Pydantic settings configuration."""
-
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        case_sensitive = True
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+    )
 
 
 # Create a global instance of settings
