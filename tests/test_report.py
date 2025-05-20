@@ -12,6 +12,12 @@ from app.report import PDFReportGenerator
 from app.predict import BBBPredictor
 
 
+@pytest.fixture
+def test_client():
+    """Fixture to provide a test client."""
+    return TestClient(app)
+
+
 client = TestClient(app)
 
 

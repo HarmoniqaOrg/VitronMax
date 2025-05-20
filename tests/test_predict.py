@@ -8,7 +8,8 @@ from app.main import app
 client = TestClient(app)
 
 
-def test_predict_fp_valid_smiles():
+@pytest.mark.parametrize("_", [(None)])
+def test_predict_fp_valid_smiles(_):
     """Test prediction with valid SMILES string."""
     response = client.post("/predict_fp", json={"smi": "CCO"})  # Ethanol SMILES
     assert response.status_code == 200

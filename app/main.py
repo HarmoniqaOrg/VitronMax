@@ -123,9 +123,9 @@ async def predict_fp(request: PredictionRequest) -> PredictionResponse:
         logger.debug(f"Initiated Supabase storage for prediction: {request.smi}")
         
         return PredictionResponse(prob=prob, version=predictor.version)
-    except ValueError:
-        logger.warning(f"Invalid prediction request: {str(e)}")
-        raise HTTPException(status_code=400, detail=str(e))
+    except ValueError as exc:
+        logger.warning(f"Invalid prediction request: {str(exc)}")
+        raise HTTPException(status_code=400, detail=str(exc))
 
 
 @app.post("/batch_predict_csv", response_model=BatchPredictionResponse, status_code=202)
@@ -167,9 +167,9 @@ async def batch_predict_csv(
             result_url=None  # Results not available immediately
         )
     
-    except ValueError:
-        logger.warning(f"Invalid batch request: {str(e)}")
-        raise HTTPException(status_code=400, detail=str(e))
+    except ValueError as exc:
+        logger.warning(f"Invalid batch request: {str(exc)}")
+        raise HTTPException(status_code=400, detail=str(exc))
     except Exception as e:
         logger.error(f"Error processing batch request: {str(e)}")
         raise HTTPException(status_code=500, detail="Error processing batch request")
@@ -307,9 +307,9 @@ async def generate_report(request: PredictionRequest):
             }
         )
         
-    except ValueError:
-        logger.warning(f"Invalid SMILES for report generation: {str(e)}")
-        raise HTTPException(status_code=400, detail=str(e))
+    except ValueError as exc:
+        logger.warning(f"Invalid SMILES for report generation: {str(exc)}")
+        raise HTTPException(status_code=400, detail=str(exc))
     except Exception as e:
         logger.error(f"Error generating PDF report: {str(e)}")
         raise HTTPException(status_code=500, detail="Error generating PDF report")

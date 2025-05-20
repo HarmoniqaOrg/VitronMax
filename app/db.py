@@ -1,6 +1,5 @@
 """Supabase integration for VitronMax."""
 from typing import Dict, Optional, Any
-import datetime
 
 import httpx
 from loguru import logger
