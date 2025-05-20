@@ -6,6 +6,7 @@ import logging
 import asyncio
 from datetime import datetime
 from typing import Dict, Union, AsyncGenerator
+from uuid import UUID
 from contextlib import asynccontextmanager
 
 from fastapi import (
@@ -27,7 +28,6 @@ from app.models import (
     PredictionResponse,
     BatchPredictionResponse,
     BatchPredictionStatusResponse,
-    UUID,
 )
 from app.predict import BBBPredictor
 from app.batch import BatchProcessor
