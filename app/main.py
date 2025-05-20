@@ -22,6 +22,7 @@ from app.models import (
     BatchPredictionStatusResponse,
     PredictionRequest,
     PredictionResponse,
+    UUID,
 )
 from app.predict import BBBPredictor
 from app.batch import BatchProcessor
@@ -96,7 +97,7 @@ async def global_exception_handler(request: Request, exc: Exception) -> JSONResp
 predictor = BBBPredictor()
 
 # Initialize the batch processor
-batch_processor = BatchProcessor(predictor)
+batch_processor = BatchProcessor(predictor=predictor)
 
 
 @app.get("/")
@@ -143,10 +144,9 @@ async def predict_fp(request: PredictionRequest) -> PredictionResponse:
         raise HTTPException(status_code=400, detail=str(exc))
 
 
-@app.post("/batch_predict_csv", response_model=BatchPredictionResponse, status_code=202)
+@app.post("/batch_predict_csv", response_model=BatchPredictionResponse)
 async def batch_predict_csv(
     file: UploadFile = File(...),
-    batch_request: BatchPredictionRequest = Depends(),
 ) -> BatchPredictionResponse:
     """Process a batch of SMILES from a CSV file and return predictions.
 
@@ -155,7 +155,6 @@ async def batch_predict_csv(
 
     Args:
         file: CSV file with SMILES strings
-        batch_request: Additional request parameters
 
     Returns:
         Job ID and initial status information
@@ -163,37 +162,48 @@ async def batch_predict_csv(
     Raises:
         HTTPException: If the file format is invalid
     """
-    logger.info(f"Received batch prediction request with file: {file.filename}")
+    if not file.filename:
+        raise HTTPException(status_code=400, detail="Filename cannot be empty.")
+    
+    logger.info(f"Received batch prediction request for file: {file.filename}")
 
     try:
-        # Start a new batch job
-        job_id = await batch_processor.start_batch_job(file)
+        # Call start_batch_job, which returns the job_id string
+        # start_batch_job internally handles file.filename
+        job_id_str: str = await batch_processor.start_batch_job(file=file)
 
-        # Get initial job status
-        job_status = batch_processor.get_job_status(job_id)
+        # After start_batch_job, active_jobs should be populated.
+        # Retrieve initial job data from active_jobs.
+        if job_id_str not in batch_processor.active_jobs:
+            logger.error(
+                f"Job {job_id_str} not found in active_jobs immediately after creation."
+            )
+            raise HTTPException(
+                status_code=500, detail="Batch job creation failed internally."
+            )
 
+        job_initial_data = batch_processor.active_jobs[job_id_str]
+        
+        # Construct the response using data from active_jobs
         return BatchPredictionResponse(
-            id=job_status["id"],
-            status=job_status["status"],
-            filename=job_status["filename"],
-            total_molecules=(
-                job_status["total_molecules"] if "total_molecules" in job_status else 0
-            ),
-            processed_molecules=(
-                job_status["processed_molecules"]
-                if "processed_molecules" in job_status
-                else 0
-            ),
-            created_at=job_status["created_at"],
-            completed_at=None,  # Job not completed yet
-            result_url=None,  # Results not available immediately
+            id=UUID(job_id_str),  # Convert string to UUID for the response model
+            status=job_initial_data["status"],
+            filename=job_initial_data["filename"],
+            total_molecules=job_initial_data["total_molecules"],
+            processed_molecules=job_initial_data.get("processed_molecules", 0),
+            created_at=job_initial_data["created_at"],
+            completed_at=job_initial_data.get("completed_at"),
+            result_url=job_initial_data.get("result_url"),
         )
 
     except ValueError as exc:
         logger.warning(f"Invalid batch request: {str(exc)}")
         raise HTTPException(status_code=400, detail=str(exc))
     except Exception as e:
-        logger.error(f"Error processing batch request: {str(e)}")
+        logger.error(f"Error processing batch request: {type(e).__name__} - {str(e)}")
+        # Consider logging the stack trace for better debugging
+        # import traceback
+        # logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail="Error processing batch request")
 
 
@@ -216,7 +226,7 @@ async def get_batch_status(job_id: str) -> BatchPredictionStatusResponse:
         job_status = batch_processor.get_job_status(job_id)
 
         return BatchPredictionStatusResponse(
-            id=job_status["id"],
+            id=UUID(job_id),
             status=job_status["status"],
             progress=job_status["progress"],
             filename=job_status["filename"],
