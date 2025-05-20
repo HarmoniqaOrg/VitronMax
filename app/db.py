@@ -28,31 +28,33 @@ class SupabaseClient:
             )
         else:
             logger.info(f"Supabase client initialized with URL: {self.url}")
-            
-    def _create_headers(self, content_type: bool = False, prefer_minimal: bool = False) -> Dict[str, str]:
+
+    def _create_headers(
+        self, content_type: bool = False, prefer_minimal: bool = False
+    ) -> Dict[str, str]:
         """Create properly typed headers for Supabase API requests.
-        
+
         Args:
             content_type: Whether to include Content-Type header
             prefer_minimal: Whether to include Prefer: return=minimal header
-            
+
         Returns:
             Dictionary with properly typed headers
         """
         # Ensure self.key is always treated as str for type safety
         api_key = self.key if self.key is not None else ""
-        
+
         headers: Dict[str, str] = {
             "apikey": api_key,
-            "Authorization": f"Bearer {api_key}"
+            "Authorization": f"Bearer {api_key}",
         }
-        
+
         if content_type:
             headers["Content-Type"] = "application/json"
-            
+
         if prefer_minimal:
             headers["Prefer"] = "return=minimal"
-            
+
         return headers
 
     async def ensure_storage_bucket_exists(self) -> bool:
