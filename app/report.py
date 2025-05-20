@@ -2,6 +2,7 @@
 Report generation functionality for the VitronMax API.
 Provides PDF report generation capabilities.
 """
+
 from io import BytesIO
 from datetime import datetime
 from typing import Dict, Any, List
@@ -16,7 +17,6 @@ from reportlab.platypus import (
     Spacer,
     Table,
     TableStyle,
-
 )
 from reportlab.lib.units import inch
 from reportlab.lib.enums import TA_CENTER
@@ -68,7 +68,7 @@ class PDFReportGenerator:
                     fontSize=20,
                 )
             )
-        
+
         if "ReportSubtitle" not in self.styles.byName:
             self.styles.add(
                 ParagraphStyle(
@@ -77,7 +77,7 @@ class PDFReportGenerator:
                     fontSize=14,
                 )
             )
-            
+
         if "ReportTableHeader" not in self.styles.byName:
             self.styles.add(
                 ParagraphStyle(
@@ -87,7 +87,7 @@ class PDFReportGenerator:
                     fontSize=10,
                 )
             )
-            
+
         if "ReportFooter" not in self.styles.byName:
             self.styles.add(
                 ParagraphStyle(
@@ -102,7 +102,7 @@ class PDFReportGenerator:
         """Generate prediction data for the report."""
         # Create BBB predictor
         predictor = BBBPredictor()
-        
+
         # Attempt prediction (which validates SMILES internally)
         try:
             bbb_prob = predictor.predict(self.smiles)
@@ -150,12 +150,14 @@ class PDFReportGenerator:
 
         # Skip logo for now - we'll add a proper logo in production
         # Logo handling is removed from tests to avoid image format issues
-        
+
         # Add title
-        elements.append(Paragraph("VitronMax BBB Permeability Report", self.styles["ReportTitle"]))
-        elements.append(Spacer(1, 0.25*inch))
+        elements.append(
+            Paragraph("VitronMax BBB Permeability Report", self.styles["ReportTitle"])
+        )
+        elements.append(Spacer(1, 0.25 * inch))
         elements.append(HRFlowable(width="100%", thickness=1, color=colors.black))
-        elements.append(Spacer(1, 0.25*inch))
+        elements.append(Spacer(1, 0.25 * inch))
         return elements
 
     def _create_molecule_section(self) -> List[Any]:
@@ -166,26 +168,32 @@ class PDFReportGenerator:
             List: List of elements for the molecule section
         """
         elements: List[Any] = []
-        elements.append(Paragraph("Molecule Information", self.styles["ReportSubtitle"]))
-        elements.append(Spacer(1, 0.1*inch))
+        elements.append(
+            Paragraph("Molecule Information", self.styles["ReportSubtitle"])
+        )
+        elements.append(Spacer(1, 0.1 * inch))
 
         # Create a table for molecule information
         data = [
             ["SMILES", self.prediction_data["smiles"]],
         ]
-        table = Table(data, colWidths=[2*inch, 4*inch])
-        table.setStyle(TableStyle([
-            ("BACKGROUND", (0, 0), (0, -1), colors.lightgrey),
-            ("TEXTCOLOR", (0, 0), (0, -1), colors.black),
-            ("ALIGN", (0, 0), (0, -1), "LEFT"),
-            ("FONTNAME", (0, 0), (0, -1), "Helvetica-Bold"),
-            ("FONTSIZE", (0, 0), (-1, -1), 10),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
-            ("BACKGROUND", (1, 0), (-1, -1), colors.white),
-            ("GRID", (0, 0), (-1, -1), 1, colors.black),
-        ]))
+        table = Table(data, colWidths=[2 * inch, 4 * inch])
+        table.setStyle(
+            TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (0, -1), colors.lightgrey),
+                    ("TEXTCOLOR", (0, 0), (0, -1), colors.black),
+                    ("ALIGN", (0, 0), (0, -1), "LEFT"),
+                    ("FONTNAME", (0, 0), (0, -1), "Helvetica-Bold"),
+                    ("FONTSIZE", (0, 0), (-1, -1), 10),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+                    ("BACKGROUND", (1, 0), (-1, -1), colors.white),
+                    ("GRID", (0, 0), (-1, -1), 1, colors.black),
+                ]
+            )
+        )
         elements.append(table)
-        elements.append(Spacer(1, 0.2*inch))
+        elements.append(Spacer(1, 0.2 * inch))
         return elements
 
     def _create_prediction_section(self) -> List[Any]:
@@ -197,31 +205,35 @@ class PDFReportGenerator:
         """
         elements: List[Any] = []
         elements.append(Paragraph("Prediction Results", self.styles["ReportSubtitle"]))
-        elements.append(Spacer(1, 0.1*inch))
+        elements.append(Spacer(1, 0.1 * inch))
 
         # Create a table for prediction results
         bbb_prob = self.prediction_data["bbb_probability"]
         bbb_prob_str = f"{bbb_prob:.2f} ({self.prediction_data['interpretation']})"
-        
+
         data = [
             ["BBB Permeability Probability", bbb_prob_str],
             ["Model Version", self.prediction_data["model_version"]],
             ["Prediction Date", self.prediction_data["timestamp"]],
         ]
-        
-        table = Table(data, colWidths=[2.5*inch, 3.5*inch])
-        table.setStyle(TableStyle([
-            ("BACKGROUND", (0, 0), (0, -1), colors.lightgrey),
-            ("TEXTCOLOR", (0, 0), (0, -1), colors.black),
-            ("ALIGN", (0, 0), (0, -1), "LEFT"),
-            ("FONTNAME", (0, 0), (0, -1), "Helvetica-Bold"),
-            ("FONTSIZE", (0, 0), (-1, -1), 10),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
-            ("BACKGROUND", (1, 0), (-1, -1), colors.white),
-            ("GRID", (0, 0), (-1, -1), 1, colors.black),
-        ]))
+
+        table = Table(data, colWidths=[2.5 * inch, 3.5 * inch])
+        table.setStyle(
+            TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (0, -1), colors.lightgrey),
+                    ("TEXTCOLOR", (0, 0), (0, -1), colors.black),
+                    ("ALIGN", (0, 0), (0, -1), "LEFT"),
+                    ("FONTNAME", (0, 0), (0, -1), "Helvetica-Bold"),
+                    ("FONTSIZE", (0, 0), (-1, -1), 10),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+                    ("BACKGROUND", (1, 0), (-1, -1), colors.white),
+                    ("GRID", (0, 0), (-1, -1), 1, colors.black),
+                ]
+            )
+        )
         elements.append(table)
-        elements.append(Spacer(1, 0.2*inch))
+        elements.append(Spacer(1, 0.2 * inch))
         return elements
 
     def _create_footer(self) -> List[Any]:
@@ -232,10 +244,10 @@ class PDFReportGenerator:
             List: List of elements for the footer
         """
         elements: List[Any] = []
-        elements.append(Spacer(1, 0.5*inch))
+        elements.append(Spacer(1, 0.5 * inch))
         elements.append(HRFlowable(width="100%", thickness=1, color=colors.black))
-        elements.append(Spacer(1, 0.1*inch))
-        
+        elements.append(Spacer(1, 0.1 * inch))
+
         footer_text = (
             "This report is generated by VitronMax API. "
             "Predictions are based on machine learning models and should be "
@@ -254,25 +266,25 @@ class PDFReportGenerator:
         """
         # Generate prediction data
         self.generate_prediction_data()
-        
+
         # Create the document content
         elements = []
-        
+
         # Add header
         elements.extend(self._create_header())
-        
+
         # Add molecule section
         elements.extend(self._create_molecule_section())
-        
+
         # Add prediction section
         elements.extend(self._create_prediction_section())
-        
+
         # Add footer
         elements.extend(self._create_footer())
-        
+
         # Build the document
         self.doc.build(elements)
-        
+
         # Reset buffer position to start
         self.buffer.seek(0)
         return self.buffer

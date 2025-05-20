@@ -1,4 +1,5 @@
 """Config module for loading and validating environment variables."""
+
 from enum import Enum
 from typing import Optional
 
@@ -27,13 +28,13 @@ class Settings(BaseSettings):
     # Supabase
     SUPABASE_URL: Optional[str] = None
     SUPABASE_SERVICE_KEY: Optional[str] = None
-    
+
     # Deployment
     FLY_API_TOKEN: Optional[str] = None
-    
+
     # Model
     MODEL_PATH: str = "models/bbb_rf_v1_0.joblib"
-    
+
     # Storage
     STORAGE_BUCKET_NAME: str = "vitronmax"
 
