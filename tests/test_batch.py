@@ -5,9 +5,11 @@ Tests for the batch prediction API endpoints.
 import io
 import pytest
 from fastapi.testclient import TestClient
-from unittest.mock import patch, MagicMock, AsyncMock
+from fastapi import UploadFile
+from unittest.mock import patch, AsyncMock, MagicMock
+import uuid
 
-from app.main import app, batch_processor
+from app.main import app, batch_processor as main_batch_processor
 from app.models import BatchPredictionStatus
 
 client = TestClient(app)
@@ -19,44 +21,69 @@ def test_batch_predict_csv_valid() -> None:
     csv_content = "SMILES\nCCO\nCC(=O)OC1=CC=CC=C1C(=O)O\nC1CCCCC1"
     csv_file = io.BytesIO(csv_content.encode())
 
-    # Mark test as expected to skip if in CI environment
-    pytest.skip("Skipping batch test that requires complex environment setup")
+    # Generate a unique job ID for this test run
+    test_job_id = str(uuid.uuid4())
+    expected_total_molecules = 3  # Number of SMILES in csv_content
 
-    # We need to patch multiple dependencies to make this test work
-    with patch("app.db.SupabaseClient", autospec=True), patch.object(
-        batch_processor, "start_batch_job"
-    ) as mock_start_job, patch.object(batch_processor, "get_job_status") as mock_status:
-
-        # Set up the mock to return a job ID
-        job_id = "test-job-123"
-        mock_start_job.return_value = job_id
-
-        # Set up the mock for job status
-        mock_status.return_value = {
-            "id": job_id,
+    # This function will be the side_effect of the mocked start_batch_job
+    async def mock_start_job_side_effect(file: UploadFile):
+        # Simulate start_batch_job populating active_jobs on the correct instance
+        main_batch_processor.active_jobs[test_job_id] = {
+            "id": test_job_id,
             "status": BatchPredictionStatus.PENDING.value,
-            "filename": "test.csv",
-            "total_molecules": 3,
+            "filename": file.filename,
+            "total_molecules": expected_total_molecules,
             "processed_molecules": 0,
             "created_at": "2025-05-19T22:00:00",
             "completed_at": None,
+            "smiles_list": ["CCO", "CC(=O)OC1=CC=CC=C1C(=O)O", "C1CCCCC1"],
             "result_url": None,
+            "results": [],
         }
+        return test_job_id  # start_batch_job returns the job_id string
 
-        # Make the request with file upload
+    # Patch 'app.main.batch_processor.start_batch_job' and 'app.main.batch_processor.process_batch_job'
+    # Also patch Supabase interactions as the real start_batch_job (even if side-effected) might call them.
+    with patch(
+        "app.main.batch_processor.start_batch_job", new_callable=AsyncMock
+    ) as mock_start_job, patch(
+        "app.main.batch_processor.process_batch_job", new_callable=AsyncMock
+    ) as mock_process_job, patch(
+        "app.db.supabase.is_configured", new=True
+    ), patch(
+        "app.db.supabase.create_batch_job", new_callable=AsyncMock
+    ):
+
+        mock_start_job.side_effect = mock_start_job_side_effect
+
+        # Make the request
         response = client.post(
             "/batch_predict_csv", files={"file": ("test.csv", csv_file, "text/csv")}
         )
 
-        # Verify the response
-        assert response.status_code == 202
+        # Assertions
+        assert response.status_code == 200, f"Response: {response.text}"
         data = response.json()
-        assert data["id"] == job_id
-        assert data["status"] == "pending"
-        assert data["total_molecules"] == 3
+        assert data["id"] == test_job_id
+        assert data["status"] == BatchPredictionStatus.PENDING.value
+        assert data["filename"] == "test.csv"
+        assert data["total_molecules"] == expected_total_molecules
 
-        # Verify the mock was called with the file
+        # Verify that start_batch_job was called once with the file
         mock_start_job.assert_called_once()
+        # Check the 'file' keyword argument from the call
+        # call_args[0] is for positional args, call_args[1] for keyword args
+        # The first positional argument to start_batch_job is 'file'
+        # If start_batch_job is defined as `async def start_batch_job(self, file: UploadFile)`
+        # then the first arg after self is file. If it's `async def start_batch_job(file: UploadFile)` (static or module level)
+        # then it's the first arg. Given it's a method on BatchProcessor, it's the first after self.
+        # The mock however, replaces the method on the instance, so its signature is `(file: UploadFile)` effectively.
+        assert mock_start_job.call_args[1]["file"].filename == "test.csv"
+
+        # process_batch_job is called by asyncio.create_task inside the real start_batch_job
+        # Our mock_start_job_side_effect does not call asyncio.create_task(mock_process_job(...))
+        # so mock_process_job should not have been called by the endpoint logic itself.
+        mock_process_job.assert_not_called()
 
 
 def test_batch_predict_csv_invalid() -> None:
@@ -66,7 +93,7 @@ def test_batch_predict_csv_invalid() -> None:
     csv_file = io.BytesIO(csv_content.encode())
 
     # Patch the batch processor to raise an error
-    with patch.object(batch_processor, "start_batch_job") as mock_start_job:
+    with patch.object(main_batch_processor, "start_batch_job") as mock_start_job:
         mock_start_job.side_effect = ValueError(
             "Could not find SMILES column in CSV header"
         )
@@ -83,31 +110,41 @@ def test_batch_predict_csv_invalid() -> None:
 
 def test_batch_status_valid() -> None:
     """Test batch status endpoint with valid job ID."""
-    job_id = "test-job-456"
+    job_id_str = str(uuid.uuid4())  # Use a valid UUID string
 
-    # Skip test that requires complex setup
-    pytest.skip("Skipping batch status test that requires complex setup")
+    # Populate the active_jobs dictionary of the batch_processor instance used by the app
+    main_batch_processor.active_jobs[job_id_str] = {
+        "id": job_id_str,
+        "status": BatchPredictionStatus.PROCESSING.value,
+        "filename": "test.csv",
+        "total_molecules": 100,
+        "processed_molecules": 33,
+        "created_at": "2025-05-19T22:00:00",
+        "completed_at": None,
+        "progress": 33.0,
+        "result_url": None,
+        "error_message": None,
+        "smiles_list": ["C"] * 100,
+        "results": [
+            {"smiles": "C", "probability": 0.5, "model_version": "1.0", "error": None}
+        ]
+        * 33,
+    }
 
-    # Make the request with a mock for get_job_status
-    with patch.object(batch_processor, "get_job_status") as mock_status:
-        mock_status.return_value = {
-            "id": job_id,
-            "status": BatchPredictionStatus.PROCESSING.value,
-            "progress": 33.3,
-            "filename": "test.csv",
-            "created_at": "2025-05-19T22:00:00",
-            "result_url": None,
-            "error_message": None,
-        }
+    # Patching is_configured to False is a good safety measure for this specific test's focus.
+    with patch("app.db.supabase.is_configured", new=False):
+        response = client.get(f"/batch_status/{job_id_str}")
 
-        response = client.get(f"/batch_status/{job_id}")
+    assert response.status_code == 200, f"Response: {response.text}"
+    data = response.json()
+    assert data["id"] == job_id_str
+    assert data["status"] == BatchPredictionStatus.PROCESSING.value
+    assert data["progress"] == 33.0
+    assert data["filename"] == "test.csv"
 
-        # Verify the response
-        assert response.status_code == 200
-        data = response.json()
-        assert data["id"] == job_id
-        assert data["status"] == "processing"
-        assert data["progress"] == 33.3
+    # Clean up the job from active_jobs to prevent interference with other tests
+    if job_id_str in main_batch_processor.active_jobs:
+        del main_batch_processor.active_jobs[job_id_str]
 
 
 def test_batch_status_invalid() -> None:
@@ -115,7 +152,7 @@ def test_batch_status_invalid() -> None:
     job_id = "nonexistent-job"
 
     # Patch the batch processor to raise an error
-    with patch.object(batch_processor, "get_job_status") as mock_status:
+    with patch.object(main_batch_processor, "get_job_status") as mock_status:
         mock_status.side_effect = ValueError(f"Job {job_id} not found")
 
         # Make the request
@@ -131,7 +168,7 @@ def test_download_results_valid() -> None:
     job_id = "test-job-789"
 
     # Patch the job status to return a completed job
-    with patch.object(batch_processor, "get_job_status") as mock_status:
+    with patch.object(main_batch_processor, "get_job_status") as mock_status:
         mock_status.return_value = {
             "id": job_id,
             "status": BatchPredictionStatus.COMPLETED.value,
@@ -140,7 +177,7 @@ def test_download_results_valid() -> None:
         }
 
         # Patch active_jobs to include our test job
-        batch_processor.active_jobs = {
+        main_batch_processor.active_jobs = {
             job_id: {
                 "results": [
                     {
@@ -180,7 +217,7 @@ def test_download_results_not_completed() -> None:
     job_id = "test-job-pending"
 
     # Patch the job status to return a processing job
-    with patch.object(batch_processor, "get_job_status") as mock_status:
+    with patch.object(main_batch_processor, "get_job_status") as mock_status:
         mock_status.return_value = {
             "id": job_id,
             "status": BatchPredictionStatus.PROCESSING.value,
@@ -227,10 +264,10 @@ async def test_supabase_storage_batch_results() -> None:
     # Use patch.object as context managers
     with patch("app.batch.supabase", mock_supabase_client):
         with patch.object(
-            batch_processor.predictor, "predict", mock_predictor_predict_method
+            main_batch_processor.predictor, "predict", mock_predictor_predict_method
         ):
             # Initial job state, similar to what start_batch_job would create
-            batch_processor.active_jobs = {
+            main_batch_processor.active_jobs = {
                 job_id: {
                     "id": job_id,
                     "status": BatchPredictionStatus.PENDING.value,
@@ -245,7 +282,7 @@ async def test_supabase_storage_batch_results() -> None:
                 }
             }
 
-            await batch_processor.process_batch_job(job_id)
+            await main_batch_processor.process_batch_job(job_id)
 
             mock_supabase_client.store_batch_result_csv.assert_called_once()
             # Optionally, check call arguments
@@ -261,7 +298,7 @@ async def test_supabase_storage_batch_results() -> None:
 async def test_get_batch_status_not_found() -> None:
     """Test that get_job_status raises ValueError for a non-existent job ID."""
     with pytest.raises(ValueError, match=r"Job fake-id-does-not-exist not found"):
-        batch_processor.get_job_status("fake-id-does-not-exist")
+        main_batch_processor.get_job_status("fake-id-does-not-exist")
 
 
 @pytest.mark.asyncio
@@ -269,7 +306,7 @@ async def test_get_batch_status_completed() -> None:
     """Test get_job_status for a completed job."""
     job_id = "completed-job-for-status-test"
     # Mock a completed job in active_jobs
-    batch_processor.active_jobs[job_id] = {
+    main_batch_processor.active_jobs[job_id] = {
         "id": job_id,
         "status": BatchPredictionStatus.COMPLETED.value,
         "filename": "completed_test.csv",
@@ -289,7 +326,7 @@ async def test_get_batch_status_completed() -> None:
         ],
     }
 
-    status = batch_processor.get_job_status(job_id)
+    status = main_batch_processor.get_job_status(job_id)
 
     assert status is not None
     assert status["id"] == job_id
@@ -297,4 +334,4 @@ async def test_get_batch_status_completed() -> None:
     assert status["result_url"] == "http://example.com/results/completed_test.csv"
 
     # Clean up the mocked job
-    del batch_processor.active_jobs[job_id]
+    del main_batch_processor.active_jobs[job_id]
