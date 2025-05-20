@@ -5,7 +5,7 @@ VitronMax API - a service for BBB permeability prediction.
 import logging
 import asyncio
 from datetime import datetime
-from typing import Dict
+from typing import Dict, Union
 
 from fastapi import FastAPI, HTTPException, Request, Depends, UploadFile, File
 from fastapi import status
@@ -225,7 +225,7 @@ async def get_batch_status(job_id: str) -> BatchPredictionStatusResponse:
 
 
 @app.get("/download/{job_id}", response_model=None)
-async def download_results(job_id: str):
+async def download_results(job_id: str) -> Union[StreamingResponse, RedirectResponse]:
     """Download the results of a batch prediction job as a CSV file.
 
     Args:
@@ -289,7 +289,7 @@ async def download_results(job_id: str):
 
 
 @app.post("/report", response_model=None)
-async def generate_report(request: PredictionRequest):
+async def generate_report(request: PredictionRequest) -> StreamingResponse:
     """Generate a PDF report for a molecule based on its SMILES string.
 
     Args:
