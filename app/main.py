@@ -8,7 +8,13 @@ from datetime import datetime
 from typing import Dict, Union, AsyncGenerator
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException, Request, Depends, UploadFile, File
+from fastapi import (
+    FastAPI,
+    HTTPException,
+    Request,
+    UploadFile,
+    File,
+)
 from fastapi import status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse, RedirectResponse
@@ -17,11 +23,10 @@ from loguru import logger
 from app.config import settings
 from app.db import supabase
 from app.models import (
-    BatchPredictionRequest,
-    BatchPredictionResponse,
-    BatchPredictionStatusResponse,
     PredictionRequest,
     PredictionResponse,
+    BatchPredictionResponse,
+    BatchPredictionStatusResponse,
     UUID,
 )
 from app.predict import BBBPredictor

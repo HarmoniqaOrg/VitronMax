@@ -10,8 +10,7 @@ from unittest.mock import patch, AsyncMock, MagicMock
 import uuid
 
 from app.main import app, batch_processor as main_batch_processor
-from app.models import BatchPredictionStatus, BatchPredictionStatusResponse
-from app.db import supabase
+from app.models import BatchPredictionStatus, JobStatus, Message
 
 client = TestClient(app)
 
@@ -48,7 +47,7 @@ def test_batch_predict_csv_valid() -> None:
     with patch("app.main.batch_processor.start_batch_job", new_callable=AsyncMock) as mock_start_job, \
          patch("app.main.batch_processor.process_batch_job", new_callable=AsyncMock) as mock_process_job, \
          patch("app.db.supabase.is_configured", new=True), \
-         patch("app.db.supabase.create_batch_job", new_callable=AsyncMock) as mock_db_create_job:
+         patch("app.db.supabase.create_batch_job", new_callable=AsyncMock):
 
         mock_start_job.side_effect = mock_start_job_side_effect
         
