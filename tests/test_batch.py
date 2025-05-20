@@ -259,8 +259,9 @@ async def test_supabase_storage_batch_results() -> None:
 
 @pytest.mark.asyncio
 async def test_get_batch_status_not_found() -> None:
-    """Test that get_job_status returns None for a non-existent job ID."""
-    assert batch_processor.get_job_status("fake-id-does-not-exist") is None
+    """Test that get_job_status raises ValueError for a non-existent job ID."""
+    with pytest.raises(ValueError, match=r"Job fake-id-does-not-exist not found"):
+        batch_processor.get_job_status("fake-id-does-not-exist")
 
 
 @pytest.mark.asyncio
