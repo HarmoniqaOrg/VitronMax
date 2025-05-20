@@ -3,6 +3,7 @@ Supabase integration for VitronMax – async REST helper.
 
 Lint-clean (ruff 0.3.x), black-formatted and mypy-strict compatible.
 """
+
 from __future__ import annotations
 
 from typing import Any, Dict, Optional, cast
@@ -192,7 +193,9 @@ class SupabaseClient:
         if not self.is_configured:
             return False
         bucket = settings.STORAGE_BUCKET_NAME
-        return (await self._bucket_exists(bucket)) or (await self._create_bucket(bucket))
+        return (await self._bucket_exists(bucket)) or (
+            await self._create_bucket(bucket)
+        )
 
     async def store_batch_result_csv(
         self, job_id: str, csv_content: str
