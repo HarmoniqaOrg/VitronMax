@@ -1,6 +1,6 @@
 """Type stubs for joblib."""
 
-from typing import Any, Dict, List, Optional, TypeVar, Union, Callable
+from typing import Any, Optional, TypeVar, Callable
 
 T = TypeVar('T')
 

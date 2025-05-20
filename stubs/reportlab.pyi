@@ -1,6 +1,6 @@
 """Type stubs for reportlab."""
 
-from typing import Any, Dict, List, Optional, Tuple, Union, Callable
+from typing import Any, Dict, List, Optional, Tuple, Callable
 
 # reportlab.lib.pagesizes
 class pagesizes:

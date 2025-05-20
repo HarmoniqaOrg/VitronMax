@@ -3,7 +3,6 @@
 from typing import Dict, Optional, Any, Mapping, cast
 
 import httpx
-from httpx import Headers
 from loguru import logger
 
 from app.config import settings

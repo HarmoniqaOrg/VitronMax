@@ -1,6 +1,6 @@
 """Type stubs for rdkit."""
 
-from typing import Any, Dict, List, Optional, Union, Tuple, overload
+from typing import Any, Optional
 
 class Mol:
     """RDKit molecule representation."""
