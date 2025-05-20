@@ -14,7 +14,7 @@ from app.predict import BBBPredictor
 
 
 @pytest.fixture
-def test_client():
+def test_client() -> TestClient:
     """Fixture to provide a test client."""
     return TestClient(app)
 
@@ -22,7 +22,7 @@ def test_client():
 client = TestClient(app)
 
 
-def test_report_endpoint_valid_smiles():
+def test_report_endpoint_valid_smiles() -> None:
     """Test that the /report endpoint returns a PDF for valid SMILES."""
     # Setup - valid SMILES
     test_smiles = "CCO"  # ethanol
@@ -47,7 +47,7 @@ def test_report_endpoint_valid_smiles():
         assert response.content.startswith(b"%PDF")
 
 
-def test_report_endpoint_invalid_smiles():
+def test_report_endpoint_invalid_smiles() -> None:
     """Test that the /report endpoint returns an error for invalid SMILES."""
     # Setup - invalid SMILES
     test_smiles = "invalid_smiles_123"
@@ -72,7 +72,7 @@ def test_report_endpoint_invalid_smiles():
         )
 
 
-def test_report_endpoint_empty_smiles():
+def test_report_endpoint_empty_smiles() -> None:
     """Test that the /report endpoint returns 422 for empty SMILES."""
     # Make the request with empty SMILES
     response = client.post("/report", json={"smi": ""})
@@ -88,7 +88,7 @@ def test_report_endpoint_empty_smiles():
     )
 
 
-def test_pdf_report_generator():
+def test_pdf_report_generator() -> None:
     """Test the PDF report generator directly."""
     # Setup
     test_smiles = "CCO"  # ethanol
@@ -108,7 +108,7 @@ def test_pdf_report_generator():
         assert pdf_buffer.getvalue().startswith(b"%PDF")
 
 
-def test_pdf_report_generator_sections():
+def test_pdf_report_generator_sections() -> None:
     """Test that the PDF report generator creates all required sections."""
     # Setup
     test_smiles = "CCO"  # ethanol
@@ -136,7 +136,7 @@ def test_pdf_report_generator_sections():
         assert len(footer_elements) > 0
 
 
-def test_interpretation_thresholds():
+def test_interpretation_thresholds() -> None:
     """Test that the interpretation text uses appropriate thresholds."""
     # Setup
     test_smiles = "CCO"  # ethanol

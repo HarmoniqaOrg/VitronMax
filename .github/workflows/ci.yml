@@ -37,7 +37,7 @@ jobs:
         env:
           CI: "true"
         run: |
-          pytest -q --cov=app
+          pytest -q --cov=app -Werror::DeprecationWarning
           
       - name: Build Docker image
         run: |
@@ -51,7 +51,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - uses: superfly/flyctl-actions/setup-flyctl@v1.7
       
       - name: Deploy to Fly.io
         run: flyctl deploy

@@ -5,12 +5,13 @@ Tests for the prediction API endpoint.
 import pytest
 from fastapi.testclient import TestClient
 from app.main import app
+from typing import Any
 
 client = TestClient(app)
 
 
 @pytest.mark.parametrize("_", [(None)])
-def test_predict_fp_valid_smiles(_):
+def test_predict_fp_valid_smiles(_: Any) -> None:
     """Test prediction with valid SMILES string."""
     response = client.post("/predict_fp", json={"smi": "CCO"})  # Ethanol SMILES
     assert response.status_code == 200
@@ -21,7 +22,7 @@ def test_predict_fp_valid_smiles(_):
     assert "version" in data
 
 
-def test_predict_fp_invalid_smiles():
+def test_predict_fp_invalid_smiles() -> None:
     """Test prediction with invalid SMILES string."""
     response = client.post("/predict_fp", json={"smi": "invalid!!!"})  # Invalid SMILES
     # FastAPI may return 400 (our explicit validation) or 422 (Pydantic validation)
@@ -30,7 +31,7 @@ def test_predict_fp_invalid_smiles():
     assert "detail" in response_json
 
 
-def test_predict_fp_empty_smiles():
+def test_predict_fp_empty_smiles() -> None:
     """Test prediction with empty SMILES string."""
     response = client.post("/predict_fp", json={"smi": ""})  # Empty SMILES
     assert response.status_code == 422  # FastAPI validation error

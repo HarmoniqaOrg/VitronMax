@@ -3,9 +3,11 @@ Blood-brain barrier permeability prediction module.
 """
 
 from pathlib import Path
-from typing import Any, List
+from typing import Any
 
 import joblib
+import numpy as np
+import numpy.typing as npt
 from rdkit import Chem
 from rdkit.Chem import AllChem
 
@@ -28,18 +30,30 @@ class BBBPredictor:
     def predict(self, smiles: str) -> float:
         """Return BBB probability for a single SMILES (0.0 – 1.0)."""
         fp = self._featurise(smiles)  # raises ValueError if invalid
-        proba: float = float(self.model.predict_proba([fp])[0, 1])
+        # sklearn expects 2-D array for a single sample
+        proba: float = float(self.model.predict_proba(fp[None, :])[0, 1])
         return proba
 
     # ---------- internal helpers ------------------------------------------
     @staticmethod
-    def _featurise(smiles: str) -> List[int]:
-        """Convert SMILES ➜ 2048-bit Morgan fingerprint."""
+    def _featurise(smiles: str) -> npt.NDArray[np.int8]:
+        """
+        Convert SMILES → Morgan fingerprint (binary int8 vector).
+        Raises ValueError on invalid SMILES.
+        """
         mol = Chem.MolFromSmiles(smiles)
         if mol is None:
             raise ValueError("Invalid SMILES")
+
         bitvect = AllChem.GetMorganFingerprintAsBitVect(
             mol, radius=FP_RADIUS, nBits=FP_BITS
         )
-        # FastAPI JSON encoder handles NumPy int* poorly – cast to int list
-        return list(bitvect)
+        # RDKit returns an ExplicitBitVect – convert to np.ndarray[int8]
+        # The ToBitString() route is efficient.
+        arr = np.zeros((FP_BITS,), dtype=np.int8)
+        # Convert bit string to buffer, then check for '1' bytes
+        on_bits = (
+            np.frombuffer(bitvect.ToBitString().encode("utf-8"), dtype="S1") == b"1"
+        )
+        arr[on_bits] = 1
+        return arr

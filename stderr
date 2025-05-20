@@ -792,3 +792,18 @@ id
 2025-05-20 21:52:52.586 | INFO     | app.main:predict_fp:129 - Processing prediction request for SMILES: CCO
 2025-05-20 21:52:52.714 | INFO     | app.main:predict_fp:133 - Prediction for CCO: 0.7959
 2025-05-20 21:52:52.758 | INFO     | app.main:generate_report:315 - Generating PDF report for SMILES: CCO
+2025-05-20 22:24:09.079 | INFO     | app.main:<module>:39 - Starting VitronMax in development environment
+2025-05-20 22:24:10.108 | INFO     | app.main:batch_predict_csv:166 - Received batch prediction request with file: invalid.csv
+2025-05-20 22:24:10.108 | WARNING  | app.main:batch_predict_csv:193 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-20 22:24:10.118 | INFO     | app.main:get_batch_status:213 - Checking status for batch job: nonexistent-job
+2025-05-20 22:24:10.118 | WARNING  | app.main:get_batch_status:229 - Job not found: nonexistent-job
+2025-05-20 22:24:10.122 | INFO     | app.main:download_results:249 - Download request for batch job: test-job-789
+2025-05-20 22:24:10.122 | INFO     | app.main:download_results:276 - Generating CSV from in-memory results for job test-job-789
+2025-05-20 22:24:10.128 | INFO     | app.main:download_results:249 - Download request for batch job: test-job-pending
+2025-05-20 22:24:10.129 | WARNING  | app.main:download_results:256 - Cannot download results for job test-job-pending: Job not completed
+2025-05-20 22:24:10.129 | ERROR    | app.main:download_results:296 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-20 22:24:10.179 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-20 22:24:10.180 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-20 22:24:10.194 | INFO     | app.main:predict_fp:127 - Processing prediction request for SMILES: CCO
+2025-05-20 22:24:10.284 | INFO     | app.main:predict_fp:131 - Prediction for CCO: 0.7959
+2025-05-20 22:24:10.530 | INFO     | app.main:generate_report:313 - Generating PDF report for SMILES: CCO
