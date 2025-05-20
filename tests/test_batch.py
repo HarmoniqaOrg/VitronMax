@@ -10,7 +10,7 @@ from unittest.mock import patch, AsyncMock, MagicMock
 import uuid
 
 from app.main import app, batch_processor as main_batch_processor
-from app.models import BatchPredictionStatus, JobStatus, Message
+from app.models import BatchPredictionStatus
 
 client = TestClient(app)
 
