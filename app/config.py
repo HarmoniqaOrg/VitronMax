@@ -1,5 +1,4 @@
 """Config module for loading and validating environment variables."""
-import os
 from enum import Enum
 from typing import Optional
 

@@ -3,11 +3,11 @@ Pydantic models for the VitronMax API.
 """
 from enum import Enum
 from uuid import UUID
-from typing import Annotated, Dict, List, Literal, Optional
+from typing import Optional
 import re
 
 from pydantic import BaseModel, Field, field_validator
-from fastapi import UploadFile, File
+
 
 
 class PredictionRequest(BaseModel):

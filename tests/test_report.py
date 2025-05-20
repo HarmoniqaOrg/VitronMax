@@ -3,9 +3,9 @@ Tests for PDF report generation functionality.
 """
 import io
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from fastapi.testclient import TestClient
-from reportlab.lib.pagesizes import letter
+
 
 from app.main import app
 from app.report import PDFReportGenerator

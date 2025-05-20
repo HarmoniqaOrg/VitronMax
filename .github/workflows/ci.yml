@@ -42,6 +42,7 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t vitronmax:test .
+          
 
   deploy:
     needs: test

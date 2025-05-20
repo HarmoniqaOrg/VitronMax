@@ -2,9 +2,7 @@
 Tests for the batch prediction API endpoints.
 """
 import io
-import json
 import pytest
-import asyncio
 from fastapi.testclient import TestClient
 from unittest.mock import patch, MagicMock
 
@@ -198,7 +196,8 @@ async def test_supabase_storage_batch_results():
     pytest.skip("Skipping Supabase Storage test that requires complex environment setup")
     
     job_id = "test-storage-job-123"
-    test_csv_content = "SMILES,BBB_Probability\nCCO,0.78\nC1CCCCC1,0.85"
+    # This will be used when the test is unskipped
+    _ = "SMILES,BBB_Probability\nCCO,0.78\nC1CCCCC1,0.85"
     test_signed_url = f"https://supabase.example.com/storage/v1/object/signed/{job_id}.csv"
     
     # Create a mock Supabase client

@@ -489,8 +489,6 @@ class SupabaseClient:
                     return None
                     
                 # Generate signed URL for the file
-                expiry = datetime.datetime.now() + datetime.timedelta(seconds=URL_EXPIRY_SECONDS)
-                
                 signed_url_params = {
                     "expiresIn": URL_EXPIRY_SECONDS
                 }

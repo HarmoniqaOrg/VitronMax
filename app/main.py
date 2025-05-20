@@ -4,7 +4,7 @@ VitronMax API - a service for BBB permeability prediction.
 import logging
 import asyncio
 from datetime import datetime
-from typing import Dict, Optional
+from typing import Dict
 
 from fastapi import FastAPI, HTTPException, Request, Depends, UploadFile, File
 from fastapi import status
@@ -123,7 +123,7 @@ async def predict_fp(request: PredictionRequest) -> PredictionResponse:
         logger.debug(f"Initiated Supabase storage for prediction: {request.smi}")
         
         return PredictionResponse(prob=prob, version=predictor.version)
-    except ValueError as e:
+    except ValueError:
         logger.warning(f"Invalid prediction request: {str(e)}")
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -167,7 +167,7 @@ async def batch_predict_csv(
             result_url=None  # Results not available immediately
         )
     
-    except ValueError as e:
+    except ValueError:
         logger.warning(f"Invalid batch request: {str(e)}")
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
@@ -203,11 +203,11 @@ async def get_batch_status(job_id: str) -> BatchPredictionStatusResponse:
             error_message=job_status.get("error_message")
         )
     
-    except ValueError as e:
+    except ValueError:
         logger.warning(f"Job not found: {job_id}")
         raise HTTPException(status_code=404, detail=f"Job not found: {job_id}")
-    except Exception as e:
-        logger.error(f"Error checking job status: {str(e)}")
+    except Exception as exc:
+        logger.error(f"Error checking job status: {str(exc)}")
         raise HTTPException(status_code=500, detail="Error checking job status")
 
 
@@ -267,7 +267,7 @@ async def download_results(job_id: str):
             }
         )
         
-    except ValueError as e:
+    except ValueError:
         logger.warning(f"Job not found: {job_id}")
         raise HTTPException(status_code=404, detail=f"Job not found: {job_id}")
     except Exception as exc:
@@ -307,7 +307,7 @@ async def generate_report(request: PredictionRequest):
             }
         )
         
-    except ValueError as e:
+    except ValueError:
         logger.warning(f"Invalid SMILES for report generation: {str(e)}")
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:

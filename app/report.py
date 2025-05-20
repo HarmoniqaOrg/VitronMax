@@ -4,8 +4,7 @@ Provides PDF report generation capabilities.
 """
 from io import BytesIO
 from datetime import datetime
-from typing import Dict, Any, Optional, List, Tuple
-import os
+from typing import Dict, Any, List
 from pathlib import Path
 
 from reportlab.lib.pagesizes import letter
@@ -17,11 +16,10 @@ from reportlab.platypus import (
     Spacer,
     Table,
     TableStyle,
-    Image,
+
 )
 from reportlab.lib.units import inch
-from reportlab.lib.enums import TA_CENTER, TA_LEFT
-from reportlab.pdfgen import canvas
+from reportlab.lib.enums import TA_CENTER
 from reportlab.platypus.flowables import HRFlowable
 
 from app.predict import BBBPredictor
@@ -108,7 +106,7 @@ class PDFReportGenerator:
         # Attempt prediction (which validates SMILES internally)
         try:
             bbb_prob = predictor.predict(self.smiles)
-        except ValueError as e:
+        except ValueError:
             raise ValueError(f"Invalid SMILES string: {self.smiles}")
 
         # Store prediction data
