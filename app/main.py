@@ -177,7 +177,7 @@ async def batch_predict_csv(
             ),
             created_at=job_status["created_at"],
             completed_at=None,  # Job not completed yet
-            result_url=None  # Results not available immediately
+            result_url=None,  # Results not available immediately
         )
 
     except ValueError as exc:

@@ -16,17 +16,20 @@ class lib:
         green: Any
         blue: Any
         HexColor: Callable[[str], Any]
-    
+
     class styles:
         @staticmethod
         def getSampleStyleSheet() -> Dict[str, Any]: ...
+
         class ParagraphStyle:
-            def __init__(self, name: str, parent: Optional[Any] = None, **kw: Any) -> None: ...
-    
+            def __init__(
+                self, name: str, parent: Optional[Any] = None, **kw: Any
+            ) -> None: ...
+
     class units:
         inch: float = 72.0
         cm: float = 28.3464566929
-    
+
     class enums:
         TA_LEFT: int = 0
         TA_CENTER: int = 1
@@ -37,8 +40,8 @@ class lib:
 class platypus:
     class SimpleDocTemplate:
         def __init__(
-            self, 
-            filename: str, 
+            self,
+            filename: str,
             pagesize: Tuple[float, float] = ...,
             rightMargin: float = 72.0,
             leftMargin: float = 72.0,
@@ -46,19 +49,20 @@ class platypus:
             bottomMargin: float = 72.0,
             **kw: Any
         ) -> None: ...
-        
         def build(self, flowables: List[Any]) -> None: ...
-    
+
     class Paragraph:
-        def __init__(self, text: str, style: Any, bulletText: Optional[str] = None) -> None: ...
-    
+        def __init__(
+            self, text: str, style: Any, bulletText: Optional[str] = None
+        ) -> None: ...
+
     class Spacer:
         def __init__(self, width: float, height: float) -> None: ...
-    
+
     class Table:
         def __init__(
-            self, 
-            data: List[List[Any]], 
+            self,
+            data: List[List[Any]],
             colWidths: Optional[List[float]] = None,
             rowHeights: Optional[List[float]] = None,
             style: Optional[Any] = None,
@@ -67,10 +71,10 @@ class platypus:
             repeatCols: int = 0,
             **kw: Any
         ) -> None: ...
-    
+
     class TableStyle:
         def __init__(self, cmds: List[Tuple]) -> None: ...
-    
+
     class Image:
         def __init__(
             self,
@@ -79,7 +83,7 @@ class platypus:
             height: Optional[float] = None,
             **kw: Any
         ) -> None: ...
-    
+
     class flowables:
         class HRFlowable:
             def __init__(

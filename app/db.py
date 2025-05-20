@@ -46,7 +46,10 @@ class SupabaseClient:
         try:
             # First check if the bucket exists
             async with httpx.AsyncClient() as client:
-                headers: Mapping[str, str] = {"apikey": self.key, "Authorization": f"Bearer {self.key}"}
+                headers: Mapping[str, str] = {
+                    "apikey": self.key,
+                    "Authorization": f"Bearer {self.key}",
+                }
 
                 # Get list of buckets
                 response = await client.get(
