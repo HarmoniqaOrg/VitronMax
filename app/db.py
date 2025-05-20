@@ -1,12 +1,11 @@
 """
-Supabase integration for VitronMax.
+Supabase integration for VitronMax – async REST helper.
 
-All HTTP calls are typed to satisfy mypy strict mode and lint-clean for ruff.
+Lint-clean (ruff 0.3.x), black-formatted and mypy-strict compatible.
 """
 from __future__ import annotations
 
-import json
-from typing import Any, Dict, List, Optional, TypedDict, cast
+from typing import Any, Dict, Optional, cast
 
 import httpx
 from loguru import logger
@@ -20,17 +19,8 @@ URL_EXPIRY_SECONDS = 60 * 60 * 24 * 7  # 7 days
 # ───────────────────────────────────────────────────────────
 
 
-class _Headers(TypedDict):
-    """Typed helper for HTTP header dictionaries."""
-
-    apikey: str
-    Authorization: str
-    Content_Type: str
-    Prefer: str
-
-
 class SupabaseClient:
-    """Minimal async REST wrapper around Supabase PostgREST + Storage APIs."""
+    """Minimal async wrapper around Supabase PostgREST + Storage APIs."""
 
     def __init__(self) -> None:
         self.url: str = settings.SUPABASE_URL or ""
@@ -38,23 +28,24 @@ class SupabaseClient:
         self.is_configured: bool = bool(self.url and self._api_key)
 
         if not self.is_configured:
-            logger.warning("Supabase is not configured – DB operations skipped.")
+            logger.warning("Supabase not configured – DB operations skipped.")
         else:
             logger.info("Supabase client initialised")
 
     # ───────────────────────── helpers ──────────────────────────
-    def _h(
+    def _hdr(
         self, *, json_ct: bool = False, prefer_minimal: bool = False
-    ) -> _Headers:
-        """Return correctly-typed header dict (mypy-safe)."""
-        hdr: _Headers = {
+    ) -> Dict[str, str]:
+        """Return headers with **no Optional values** (mypy-safe)."""
+        hdr: Dict[str, str] = {
             "apikey": self._api_key,
             "Authorization": f"Bearer {self._api_key}",
-            "Content_Type": "application/json" if json_ct else "",
-            "Prefer": "return=minimal" if prefer_minimal else "",
         }
-        # Remove empty kv-pairs (keeps Mapping[str,str] invariant).
-        return cast(_Headers, {k: v for k, v in hdr.items() if v})
+        if json_ct:
+            hdr["Content-Type"] = "application/json"
+        if prefer_minimal:
+            hdr["Prefer"] = "return=minimal"
+        return hdr
 
     async def _post_json(
         self, route: str, payload: Dict[str, Any]
@@ -64,11 +55,12 @@ class SupabaseClient:
         async with httpx.AsyncClient() as cli:
             r = await cli.post(
                 f"{self.url}{route}",
-                headers=self._h(json_ct=True, prefer_minimal=True),
+                headers=self._hdr(json_ct=True, prefer_minimal=True),
                 json=payload,
                 timeout=5.0,
             )
             if r.status_code in (200, 201):
+                # PostgREST can return empty body with 201+Prefer=return=minimal
                 return cast(Dict[str, Any], r.json() or {})
             logger.error("Supabase POST %s → %s – %s", route, r.status_code, r.text)
             return None
@@ -81,7 +73,7 @@ class SupabaseClient:
         async with httpx.AsyncClient() as cli:
             r = await cli.patch(
                 f"{self.url}{route}",
-                headers=self._h(json_ct=True, prefer_minimal=True),
+                headers=self._hdr(json_ct=True, prefer_minimal=True),
                 json=payload,
                 timeout=5.0,
             )
@@ -94,7 +86,6 @@ class SupabaseClient:
     async def store_prediction(
         self, smiles: str, probability: float, model_version: str = "v1.0"
     ) -> Optional[Dict[str, Any]]:
-        """Insert one row into `predictions` table."""
         return await self._post_json(
             "/rest/v1/predictions",
             {
@@ -182,9 +173,7 @@ class SupabaseClient:
     async def _bucket_exists(self, bucket: str) -> bool:
         async with httpx.AsyncClient() as cli:
             r = await cli.get(
-                f"{self.url}/storage/v1/bucket",
-                headers=self._h(),
-                timeout=5.0,
+                f"{self.url}/storage/v1/bucket", headers=self._hdr(), timeout=5.0
             )
             return r.status_code == 200 and any(b["name"] == bucket for b in r.json())
 
@@ -192,31 +181,29 @@ class SupabaseClient:
         async with httpx.AsyncClient() as cli:
             r = await cli.post(
                 f"{self.url}/storage/v1/bucket",
-                headers=self._h(json_ct=True),
+                headers=self._hdr(json_ct=True),
                 json={"name": bucket, "public": False},
                 timeout=5.0,
             )
             return r.status_code in (200, 201)
 
     async def ensure_storage_bucket(self) -> bool:
-        """Create private bucket if missing.  True ⇢ ready."""
+        """Ensure a private Storage bucket exists."""
         if not self.is_configured:
             return False
         bucket = settings.STORAGE_BUCKET_NAME
-        if await self._bucket_exists(bucket):
-            return True
-        logger.info("Creating Supabase Storage bucket %s", bucket)
-        return await self._create_bucket(bucket)
+        return (await self._bucket_exists(bucket)) or (await self._create_bucket(bucket))
 
     async def store_batch_result_csv(
         self, job_id: str, csv_content: str
     ) -> Optional[str]:
-        """Upload CSV and return a signed URL (expires in 7 days)."""
+        """Upload CSV & return signed URL valid for 7 days."""
         if not self.is_configured or not await self.ensure_storage_bucket():
             return None
 
         bucket = settings.STORAGE_BUCKET_NAME
         path = f"{STORAGE_BATCH_RESULTS_PATH}/{job_id}.csv"
+
         async with httpx.AsyncClient() as cli:
             # Upload
             up = await cli.post(
@@ -232,10 +219,11 @@ class SupabaseClient:
             if up.status_code not in (200, 201):
                 logger.error("Upload failed → %s %s", up.status_code, up.text)
                 return None
+
             # Sign
             sign = await cli.post(
                 f"{self.url}/storage/v1/object/sign/{bucket}/{path}",
-                headers=self._h(json_ct=True),
+                headers=self._hdr(json_ct=True),
                 json={"expiresIn": URL_EXPIRY_SECONDS},
                 timeout=5.0,
             )
@@ -244,9 +232,10 @@ class SupabaseClient:
                 if rel_url and not rel_url.startswith("http"):
                     rel_url = f"{self.url}{rel_url}"
                 return rel_url
+
             logger.error("Signed-URL failed → %s %s", sign.status_code, sign.text)
             return None
 
 
-# Global singleton – safe for FastAPI import-at-module-load pattern
+# Global singleton (import-time creation is fine for FastAPI)
 supabase = SupabaseClient()
