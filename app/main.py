@@ -169,7 +169,7 @@ async def batch_predict_csv(
     """
     if not file.filename:
         raise HTTPException(status_code=400, detail="Filename cannot be empty.")
-    
+
     logger.info(f"Received batch prediction request for file: {file.filename}")
 
     try:
@@ -188,7 +188,7 @@ async def batch_predict_csv(
             )
 
         job_initial_data = batch_processor.active_jobs[job_id_str]
-        
+
         # Construct the response using data from active_jobs
         return BatchPredictionResponse(
             id=UUID(job_id_str),  # Convert string to UUID for the response model
