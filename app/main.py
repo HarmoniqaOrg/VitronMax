@@ -54,7 +54,7 @@ app.add_middleware(
 
 
 @app.on_event("startup")
-async def startup_event():
+async def startup_event() -> None:
     """Initialize necessary resources on startup."""
     logger.info("Initializing application resources")
 
@@ -176,7 +176,8 @@ async def batch_predict_csv(
                 else 0
             ),
             created_at=job_status["created_at"],
-            result_url=None,  # Results not available immediately
+            completed_at=None,  # Job not completed yet
+            result_url=None  # Results not available immediately
         )
 
     except ValueError as exc:
@@ -224,7 +225,7 @@ async def get_batch_status(job_id: str) -> BatchPredictionStatusResponse:
 
 
 @app.get("/download/{job_id}")
-async def download_results(job_id: str):
+async def download_results(job_id: str) -> StreamingResponse | RedirectResponse:
     """Download the results of a batch prediction job as a CSV file.
 
     Args:
@@ -288,7 +289,7 @@ async def download_results(job_id: str):
 
 
 @app.post("/report")
-async def generate_report(request: PredictionRequest):
+async def generate_report(request: PredictionRequest) -> StreamingResponse:
     """Generate a PDF report for a molecule based on its SMILES string.
 
     Args:

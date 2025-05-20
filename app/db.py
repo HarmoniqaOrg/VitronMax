@@ -1,8 +1,9 @@
 """Supabase integration for VitronMax."""
 
-from typing import Dict, Optional, Any
+from typing import Dict, Optional, Any, Mapping, cast
 
 import httpx
+from httpx import Headers
 from loguru import logger
 
 from app.config import settings
@@ -46,7 +47,7 @@ class SupabaseClient:
         try:
             # First check if the bucket exists
             async with httpx.AsyncClient() as client:
-                headers = {"apikey": self.key, "Authorization": f"Bearer {self.key}"}
+                headers: Mapping[str, str] = {"apikey": self.key, "Authorization": f"Bearer {self.key}"}
 
                 # Get list of buckets
                 response = await client.get(
@@ -115,7 +116,7 @@ class SupabaseClient:
 
         try:
             async with httpx.AsyncClient() as client:
-                headers = {
+                headers: Dict[str, str] = {
                     "apikey": self.key,
                     "Authorization": f"Bearer {self.key}",
                     "Content-Type": "application/json",
@@ -138,7 +139,7 @@ class SupabaseClient:
 
                 if response.status_code in (200, 201):
                     logger.info(f"Successfully stored prediction for {smiles}")
-                    return response.json()
+                    return cast(Dict[str, Any], response.json())
                 else:
                     logger.error(
                         f"Failed to store prediction: {response.status_code} {response.text}"
@@ -168,7 +169,7 @@ class SupabaseClient:
 
         try:
             async with httpx.AsyncClient() as client:
-                headers = {
+                headers: Dict[str, str] = {
                     "apikey": self.key,
                     "Authorization": f"Bearer {self.key}",
                     "Content-Type": "application/json",
@@ -192,7 +193,7 @@ class SupabaseClient:
 
                 if response.status_code in (200, 201):
                     logger.info(f"Successfully created batch job {job_id}")
-                    return response.json()
+                    return cast(Dict[str, Any], response.json())
                 else:
                     logger.error(
                         f"Failed to create batch job: {response.status_code} {response.text}"
@@ -220,7 +221,7 @@ class SupabaseClient:
 
         try:
             async with httpx.AsyncClient() as client:
-                headers = {
+                headers: Dict[str, str] = {
                     "apikey": self.key,
                     "Authorization": f"Bearer {self.key}",
                     "Content-Type": "application/json",
@@ -266,7 +267,7 @@ class SupabaseClient:
 
         try:
             async with httpx.AsyncClient() as client:
-                headers = {
+                headers: Dict[str, str] = {
                     "apikey": self.key,
                     "Authorization": f"Bearer {self.key}",
                     "Content-Type": "application/json",
@@ -321,7 +322,7 @@ class SupabaseClient:
 
         try:
             async with httpx.AsyncClient() as client:
-                headers = {
+                headers: Dict[str, str] = {
                     "apikey": self.key,
                     "Authorization": f"Bearer {self.key}",
                     "Content-Type": "application/json",
@@ -352,12 +353,9 @@ class SupabaseClient:
                     logger.error(
                         f"Failed to store batch prediction item: {response.status_code} {response.text}"
                     )
+                    return cast(str, response.text)
 
-                return (
-                    None
-                    if response.status_code not in (200, 201)
-                    else {"success": True}
-                )
+                return {"success": True}
 
         except Exception as e:
             logger.exception(f"Error storing batch prediction item: {e}")

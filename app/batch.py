@@ -27,7 +27,7 @@ class BatchProcessor:
             predictor: The prediction model to use
         """
         self.predictor = predictor
-        self.active_jobs: Dict[str, Dict] = {}
+        self.active_jobs: Dict[str, Dict[str, Any]] = {}
 
     @staticmethod
     async def validate_csv(file: UploadFile) -> Tuple[bool, Optional[str], List[str]]:
@@ -268,7 +268,7 @@ class BatchProcessor:
             if supabase.is_configured:
                 await supabase.fail_batch_job(job_id=job_id, error_message=str(e))
 
-    def get_job_status(self, job_id: str) -> Dict:
+    def get_job_status(self, job_id: str) -> Dict[str, Any]:
         """Get the status of a batch prediction job.
 
         Args:
@@ -302,7 +302,7 @@ class BatchProcessor:
         }
 
     @staticmethod
-    def _generate_results_csv(results: List[Dict]) -> str:
+    def _generate_results_csv(results: List[Dict[str, Any]]) -> str:
         """Generate a CSV string from prediction results.
 
         Args:
