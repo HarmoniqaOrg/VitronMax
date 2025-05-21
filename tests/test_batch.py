@@ -8,7 +8,7 @@ import io
 import logging
 from io import BytesIO
 import pytest
-from fastapi import UploadFile, BackgroundTasks
+from fastapi import UploadFile
 from fastapi.testclient import TestClient
 from unittest.mock import AsyncMock, MagicMock, patch, call
 import uuid
@@ -18,8 +18,6 @@ import re
 from app.main import app, batch_processor as main_batch_processor
 from app.models import BatchPredictionStatus
 from app.batch import BatchProcessor
-from app.config import settings
-from app.db import SupabaseClient
 from app.predict import BBBPredictor
 
 client = TestClient(app)
@@ -846,6 +844,7 @@ async def test_process_batch_job_smiles_error():
         "total_molecules": len(smiles_list),
         "processed_molecules": 0,
         "created_at": datetime.now().isoformat(),
+        "completed_at": None,
         "results": [],
         "error_message": None,  # Job-level error, should remain None
         "result_url": None,
@@ -968,6 +967,7 @@ async def test_process_batch_job_supabase_storage_failure():
         "total_molecules": len(smiles_list),
         "processed_molecules": 0,
         "created_at": datetime.now().isoformat(),
+        "completed_at": None,
         "results": [],
         "error_message": None,
         "result_url": None,
@@ -1076,6 +1076,7 @@ async def test_process_batch_job_generic_failure():
         "total_molecules": len(smiles_list),
         "processed_molecules": 0,
         "created_at": datetime.now().isoformat(),
+        "completed_at": None,
         "results": [],
         "error_message": None,
         "result_url": None,
