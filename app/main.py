@@ -16,6 +16,7 @@ from fastapi import (
     Request,
     UploadFile,
     File,
+    status,  # Add status import
 )
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse, RedirectResponse
@@ -107,12 +108,16 @@ batch_processor = BatchProcessor(predictor=predictor, supabase_client=supabase)
 
 
 @app.get("/", response_class=RedirectResponse, include_in_schema=False)
-async def root(request: Request):
+async def root(request: Request) -> RedirectResponse:
     # Redirect root to /docs for API documentation
     return RedirectResponse(url="/docs")
 
 
-@app.get("/api/v1/batch/job_status/{job_id}", response_model=BatchPredictionStatusResponse, tags=["batch"])
+@app.get(
+    "/api/v1/batch/job_status/{job_id}",
+    response_model=BatchPredictionStatusResponse,
+    tags=["batch"],
+)
 async def get_batch_job_status(job_id: str) -> BatchPredictionStatusResponse:
     """Get the status of a batch prediction job."""
     logger.info(f"Received status request for job ID: {job_id}")
@@ -149,7 +154,10 @@ async def get_batch_job_status(job_id: str) -> BatchPredictionStatusResponse:
         raise HTTPException(status_code=404, detail=f"Job ID {job_id} not found")
     except Exception as e:
         logger.error(f"Error retrieving status for job ID {job_id}: {e}")
-        raise HTTPException(status_code=500, detail=f"Error retrieving status for job {job_id}: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error retrieving status for job {job_id}: {str(e)}",
+        )
 
 
 @app.get("/healthz", tags=["health"])
@@ -198,19 +206,26 @@ async def predict_fp(request: PredictionRequest) -> PredictionResponse:
     summary="Submit a CSV file for batch BBB permeability prediction",
     description="Accepts a CSV file containing SMILES strings, processes them asynchronously, "
     "and returns a job ID for status tracking and result retrieval.",
-    name="batch_predict_csv"
+    name="batch_predict_csv",
 )
 async def submit_batch_predict_csv(
     file: UploadFile = File(...),
 ) -> BatchPredictionResponse:
     """Handles the upload of a CSV file for batch prediction."""
-    logger.info("Accessed /api/v1/batch/predict_csv endpoint (submit_batch_predict_csv function)")
+    logger.info(
+        "Accessed /api/v1/batch/predict_csv endpoint (submit_batch_predict_csv function)"
+    )
     if not file.filename:
-        raise HTTPException(status_code=400, detail={"message": "Filename cannot be empty."})
+        raise HTTPException(
+            status_code=400, detail={"message": "Filename cannot be empty."}
+        )
 
     if not file.filename.endswith(".csv"):
         logger.warning(f"Invalid file type uploaded: {file.filename}")
-        raise HTTPException(status_code=400, detail={"message": "Invalid file type. Only .csv files are accepted."})
+        raise HTTPException(
+            status_code=400,
+            detail={"message": "Invalid file type. Only .csv files are accepted."},
+        )
 
     try:
         # Call start_batch_job, which returns the job_id string
@@ -224,7 +239,8 @@ async def submit_batch_predict_csv(
                 f"Job {job_id_str} not found in active_jobs immediately after creation."
             )
             raise HTTPException(
-                status_code=500, detail={"message": "Batch job creation failed internally."}
+                status_code=500,
+                detail={"message": "Batch job creation failed internally."},
             )
 
         job_initial_data = batch_processor.active_jobs[job_id_str]
@@ -248,7 +264,9 @@ async def submit_batch_predict_csv(
         raise HTTPException(status_code=400, detail={"message": str(ve)})
     except Exception as e:
         logger.error(f"Unexpected error starting batch job for {file.filename}: {e}")
-        raise HTTPException(status_code=500, detail={"message": f"Failed to start batch job: {str(e)}"})
+        raise HTTPException(
+            status_code=500, detail={"message": f"Failed to start batch job: {str(e)}"}
+        )
 
 
 @app.get("/batch_status/{job_id}", response_model=BatchPredictionStatusResponse)

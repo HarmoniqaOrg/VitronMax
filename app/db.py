@@ -67,14 +67,14 @@ class SupabaseClient:
                 # Otherwise, try to parse JSON.
                 try:
                     return cast(Dict[str, Any], r.json())
-                except ValueError:  
+                except ValueError:
                     logger.error(
                         "Supabase POST %s → %s – Failed to decode JSON response: %s",
                         route,
                         r.status_code,
-                        r.text[:200],  
+                        r.text[:200],
                     )
-                    return None  
+                    return None
             logger.error("Supabase POST %s → %s – %s", route, r.status_code, r.text)
             return None
 

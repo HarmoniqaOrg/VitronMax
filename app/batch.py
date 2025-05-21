@@ -193,7 +193,7 @@ class BatchProcessor:
 
         smiles_list = job["smiles_list"]
         results = []
-        result: ResultItemDict  # type: ignore # Will be assigned in the loop
+        result: ResultItemDict
 
         try:
             # Process each SMILES
@@ -279,16 +279,22 @@ class BatchProcessor:
             job["results"] = results
 
             # Update job status to COMPLETED or FAILED (if exception occurred)
-            if job.get("status") != BatchPredictionStatus.FAILED.value: # Check if not already failed
+            if (
+                job.get("status") != BatchPredictionStatus.FAILED.value
+            ):  # Check if not already failed
                 job["status"] = BatchPredictionStatus.COMPLETED.value
-            job["completed_at"] = datetime.now(tz.tzutc()).isoformat() # Use timezone.utc
+            job["completed_at"] = datetime.now(
+                tz.tzutc()
+            ).isoformat()  # Use timezone.utc
 
             # Update database
             if self.supabase and self.supabase.is_configured:
-                current_status_enum = BatchPredictionStatus(job["status"]) # Convert string to enum
+                current_status_enum = BatchPredictionStatus(
+                    job["status"]
+                )  # Convert string to enum
                 await self.supabase.complete_batch_job(
                     job_id=job_id,
-                    status=current_status_enum, # Pass the enum member
+                    status=current_status_enum,  # Pass the enum member
                     result_url=job.get("result_url"),
                     error_message=job.get("error_message"),
                 )

@@ -102,7 +102,7 @@ async def test_process_batch_job_success(
         job_id,
         BatchPredictionStatus.COMPLETED.value,
         "https://example.com/results.csv",
-        None
+        None,
     )
     # Ensure initial status update to PROCESSING was called
     processor.supabase.update_batch_job_status.assert_any_call(
@@ -198,7 +198,7 @@ async def test_process_batch_job_partial_success_invalid_smiles(
         job_id,
         BatchPredictionStatus.COMPLETED.value,
         "https://example.com/partial_results.csv",
-        None
+        None,
     )
     processor.supabase.update_batch_job_status.assert_any_call(
         job_id, BatchPredictionStatus.PROCESSING.value
@@ -262,10 +262,14 @@ async def test_process_batch_job_predictor_error(
     # Create a dedicated Supabase mock for this test
     mock_supabase_for_test = AsyncMock(spec=SupabaseClient)
     mock_supabase_for_test.is_configured = True
-    mock_supabase_for_test.store_batch_result_csv = AsyncMock(return_value="http://mocked.url/predictor_error.csv")
+    mock_supabase_for_test.store_batch_result_csv = AsyncMock(
+        return_value="http://mocked.url/predictor_error.csv"
+    )
     mock_supabase_for_test.complete_batch_job = AsyncMock()
     mock_supabase_for_test.update_batch_job_status = AsyncMock()
-    mock_supabase_for_test.store_batch_prediction_item = AsyncMock() # Should not be called if all predictions error before storage attempt
+    mock_supabase_for_test.store_batch_prediction_item = (
+        AsyncMock()
+    )  # Should not be called if all predictions error before storage attempt
     processor.supabase = mock_supabase_for_test
 
     await processor.process_batch_job(job_id)
@@ -285,7 +289,7 @@ async def test_process_batch_job_predictor_error(
         status=BatchPredictionStatus.COMPLETED,
         # result_url will be the return value of the mocked store_batch_result_csv
         result_url=processor.supabase.store_batch_result_csv.return_value,
-        error_message=None # No job-level error message
+        error_message=None,  # No job-level error message
     )
 
     # Predictor should have been called for the first SMILES, then failed on the second
@@ -299,9 +303,7 @@ async def test_process_batch_job_predictor_error(
     )
     # Final status update to COMPLETED
     processor.supabase.update_batch_job_status.assert_any_call(
-        job_id,
-        BatchPredictionStatus.COMPLETED.value,
-        error_message=None
+        job_id, BatchPredictionStatus.COMPLETED.value, error_message=None
     )
     # store_batch_prediction_item should be called for the first (successful) item
     processor.supabase.store_batch_prediction_item.assert_called_once_with(
@@ -364,15 +366,19 @@ async def test_process_batch_job_supabase_upload_failure(
     async def mock_store_results_side_effect(*args, **kwargs):
         raise Exception(supabase_upload_error_message)
 
-    mock_supabase_for_test.store_batch_result_csv = AsyncMock(side_effect=mock_store_results_side_effect)
-    mock_supabase_for_test.complete_batch_job = AsyncMock() # Should not be called
+    mock_supabase_for_test.store_batch_result_csv = AsyncMock(
+        side_effect=mock_store_results_side_effect
+    )
+    mock_supabase_for_test.complete_batch_job = AsyncMock()  # Should not be called
 
-    processor.supabase = mock_supabase_for_test # Assign the dedicated mock
+    processor.supabase = mock_supabase_for_test  # Assign the dedicated mock
 
     await processor.process_batch_job(job_id)
 
     assert job_details["status"] == BatchPredictionStatus.FAILED.value
-    assert job_details["error_message"] == supabase_upload_error_message # Corrected assertion
+    assert (
+        job_details["error_message"] == supabase_upload_error_message
+    )  # Corrected assertion
 
     assert job_details["result_url"] is None
     # Results should still be populated locally in job_details even if upload fails
@@ -404,11 +410,11 @@ async def test_process_batch_job_supabase_upload_failure(
     )
 
     processor.supabase.store_batch_result_csv.assert_called_once()  # It was called and then it failed
-    processor.supabase.complete_batch_job.assert_called_once_with( # Corrected assertion
+    processor.supabase.complete_batch_job.assert_called_once_with(  # Corrected assertion
         job_id=job_id,
         status=BatchPredictionStatus.FAILED,
-        result_url=None, # Expect None as result_url if upload failed
-        error_message=supabase_upload_error_message
+        result_url=None,  # Expect None as result_url if upload failed
+        error_message=supabase_upload_error_message,
     )
 
 
@@ -442,7 +448,9 @@ async def test_process_batch_job_no_smiles(
         return_value="http://mocked.url/empty_smiles.csv"
     )
     mock_supabase_for_test.complete_batch_job = AsyncMock()
-    mock_supabase_for_test.update_batch_job_status = AsyncMock() # Added for completeness if any status updates are checked
+    mock_supabase_for_test.update_batch_job_status = (
+        AsyncMock()
+    )  # Added for completeness if any status updates are checked
     # Assign the dedicated mock to the processor for this test
     processor.supabase = mock_supabase_for_test
 
@@ -465,14 +473,16 @@ async def test_process_batch_job_no_smiles(
     processor.supabase.store_batch_result_csv.assert_called_once()
     # Check the csv_content argument passed to store_batch_result_csv
     assert (
-        processor.supabase.store_batch_result_csv.call_args.kwargs['csv_content'] # Corrected access to kwargs
+        processor.supabase.store_batch_result_csv.call_args.kwargs[
+            "csv_content"
+        ]  # Corrected access to kwargs
         == "SMILES,BBB_Probability,Model_Version,Error\r\n"
     )
     processor.supabase.complete_batch_job.assert_called_once_with(
         job_id=job_id,
         status=BatchPredictionStatus.COMPLETED,
-        result_url=processor.supabase.store_batch_result_csv.return_value, # The URL from the (mocked) upload
-        error_message=None
+        result_url=processor.supabase.store_batch_result_csv.return_value,  # The URL from the (mocked) upload
+        error_message=None,
     )
 
 
@@ -519,7 +529,9 @@ async def test_start_batch_job_valid_csv_supabase_not_configured(
     job_details = processor.active_jobs[job_id]
     assert job_details["filename"] == mock_upload_file_valid.filename
     assert job_details["status"] == BatchPredictionStatus.PENDING.value
-    assert job_details["total_molecules"] == 2  # Based on mock_upload_file_valid content
+    assert (
+        job_details["total_molecules"] == 2
+    )  # Based on mock_upload_file_valid content
     # Verify Supabase client's create_batch_job was NOT called
     processor.supabase.create_batch_job.assert_not_called()
 
@@ -538,16 +550,12 @@ async def test_start_batch_job_valid_csv_supabase_configured(
 
     # Mock process_batch_job for this test to isolate start_batch_job logic
     mock_process_batch_job = mocker.patch.object(
-        processor,
-        "process_batch_job",
-        new_callable=AsyncMock
+        processor, "process_batch_job", new_callable=AsyncMock
     )
     # Patch asyncio.create_task where it's looked up by BatchProcessor
     mock_create_task = mocker.patch("app.batch.asyncio.create_task")
 
-    job_id = await processor.start_batch_job(
-        mock_upload_file_valid
-    )
+    job_id = await processor.start_batch_job(mock_upload_file_valid)
 
     assert job_id is not None
     assert job_id in processor.active_jobs
@@ -559,7 +567,7 @@ async def test_start_batch_job_valid_csv_supabase_configured(
     mock_supabase_client_configured.create_batch_job.assert_called_once_with(
         job_id=job_id,  # Expect string, matching mock's recorded call_args
         filename=mock_upload_file_valid.filename,
-        total_molecules=2 # Assuming mock_upload_file_valid has 2 smiles
+        total_molecules=2,  # Assuming mock_upload_file_valid has 2 smiles
     )
 
     # Check that process_batch_job was scheduled

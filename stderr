@@ -2147,3 +2147,20 @@ id
 2025-05-22 00:52:16.128 | INFO     | __mp_main__:<module>:46 - Starting VitronMax in development environment
 2025-05-22 00:53:41.360 | INFO     | __mp_main__:<module>:46 - Starting VitronMax in development environment
 2025-05-22 01:23:16.347 | INFO     | __mp_main__:<module>:46 - Starting VitronMax in development environment
+2025-05-22 01:32:42.191 | INFO     | __mp_main__:<module>:47 - Starting VitronMax in development environment
+2025-05-22 01:32:43.148 | INFO     | app.main:<module>:47 - Starting VitronMax in development environment
+2025-05-22 01:32:43.352 | INFO     | app.main:lifespan:53 - Initializing application resources (lifespan startup)
+2025-05-22 01:32:43.352 | INFO     | app.main:lifespan:58 - Checking Supabase Storage bucket (lifespan)
+2025-05-22 01:32:43.723 | INFO     | app.main:lifespan:61 - Supabase Storage bucket confirmed (lifespan)
+2025-05-22 01:32:58.035 | INFO     | app.main:lifespan:73 - Application shutdown (lifespan)
+2025-05-22 01:32:59.337 | INFO     | __mp_main__:<module>:47 - Starting VitronMax in development environment
+2025-05-22 01:33:00.141 | INFO     | app.main:<module>:47 - Starting VitronMax in development environment
+2025-05-22 01:33:00.346 | INFO     | app.main:lifespan:53 - Initializing application resources (lifespan startup)
+2025-05-22 01:33:00.346 | INFO     | app.main:lifespan:58 - Checking Supabase Storage bucket (lifespan)
+2025-05-22 01:33:00.474 | INFO     | app.main:lifespan:61 - Supabase Storage bucket confirmed (lifespan)
+2025-05-22 01:36:28.167 | INFO     | app.main:lifespan:73 - Application shutdown (lifespan)
+2025-05-22 01:36:29.578 | INFO     | __mp_main__:<module>:47 - Starting VitronMax in development environment
+2025-05-22 01:36:30.395 | INFO     | app.main:<module>:47 - Starting VitronMax in development environment
+2025-05-22 01:36:30.603 | INFO     | app.main:lifespan:53 - Initializing application resources (lifespan startup)
+2025-05-22 01:36:30.603 | INFO     | app.main:lifespan:58 - Checking Supabase Storage bucket (lifespan)
+2025-05-22 01:36:30.919 | INFO     | app.main:lifespan:61 - Supabase Storage bucket confirmed (lifespan)

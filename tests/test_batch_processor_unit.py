@@ -5,8 +5,7 @@ Unit tests for the BatchProcessor class methods (minimal external dependencies).
 import pytest
 from io import BytesIO
 from typing import Dict, Any, List
-import uuid
-from datetime import datetime
+
 from unittest.mock import AsyncMock
 from typing import cast
 from fastapi import UploadFile
@@ -55,7 +54,9 @@ async def test_validate_csv_invalid_empty(
     processor = processor_with_mock_predictor
     # Test with a truly empty CSV file content
     csv_content_empty = ""
-    file_empty = UploadFile(filename="empty.csv", file=BytesIO(csv_content_empty.encode()))
+    file_empty = UploadFile(
+        filename="empty.csv", file=BytesIO(csv_content_empty.encode())
+    )
     is_valid, error_msg, smiles_list = await processor.validate_csv(file_empty)
     assert is_valid is False
     assert error_msg == "Empty CSV file"
@@ -66,9 +67,7 @@ async def test_validate_csv_invalid_empty(
     file_header_only = UploadFile(
         filename="header_only.csv", file=BytesIO(csv_content_header_only.encode())
     )
-    is_valid, error_msg, smiles_list = await processor.validate_csv(
-        file_header_only
-    )
+    is_valid, error_msg, smiles_list = await processor.validate_csv(file_header_only)
     assert is_valid is False
     assert error_msg == "No valid SMILES found in the CSV file"
     assert smiles_list == []
@@ -227,11 +226,10 @@ async def test_start_batch_job_valid_csv(
     mock_parse_csv.assert_called_once_with(mock_upload_file_valid)
 
     # Check if Supabase create_batch_job was called if configured
-    expected_created_at = datetime.fromisoformat(job_details["created_at"])
     processor.supabase.create_batch_job.assert_called_once_with(
-        job_id=job_id, 
+        job_id=job_id,
         filename=mock_upload_file_valid.filename,
-        total_molecules=len(parsed_smiles_list)
+        total_molecules=len(parsed_smiles_list),
     )
 
     # Ensure process_batch_job is scheduled via asyncio.create_task
