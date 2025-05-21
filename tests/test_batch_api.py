@@ -70,7 +70,9 @@ def test_batch_predict_csv_valid(client: TestClient) -> None:
 
         # Verify that start_batch_job was called once with the file
         mock_start_job.assert_called_once()
-        assert "file" in mock_start_job.call_args.kwargs, "Mock was not called with 'file' keyword argument."
+        assert (
+            "file" in mock_start_job.call_args.kwargs
+        ), "Mock was not called with 'file' keyword argument."
         uploaded_file_arg = mock_start_job.call_args.kwargs["file"]
         assert uploaded_file_arg.filename == "test.csv"
         mock_process_job.assert_not_called()
