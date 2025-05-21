@@ -28,6 +28,7 @@ class BatchProcessor:
         """
         self.predictor = predictor
         self.active_jobs: Dict[str, Dict[str, Any]] = {}
+        self.supabase = supabase  # Added this line
 
     @staticmethod
     async def validate_csv(file: UploadFile) -> Tuple[bool, Optional[str], List[str]]:
@@ -109,26 +110,33 @@ class BatchProcessor:
 
         # Original filename
         filename = file.filename
+        current_time_iso = datetime.now().isoformat()
+        current_status = BatchPredictionStatus.PENDING.value
 
         # Create job in database
-        if supabase.is_configured:
+        if self.supabase.is_configured:
             # Insert record into batch_predictions table
             logger.info(f"Creating batch job in database: {job_id}")
-            await supabase.create_batch_job(
-                job_id=job_id, filename=filename, total_molecules=len(smiles_list)
+            await self.supabase.create_batch_job(
+                job_id=job_id,
+                filename=filename,
+                total_molecules=len(smiles_list),
+                status=current_status,
+                created_at=current_time_iso,
             )
 
         # Store job info in memory (for demo purposes)
         self.active_jobs[job_id] = {
             "id": job_id,
-            "status": BatchPredictionStatus.PENDING.value,
+            "status": current_status,
             "filename": filename,
             "total_molecules": len(smiles_list),
             "processed_molecules": 0,
-            "created_at": datetime.now().isoformat(),
+            "created_at": current_time_iso,
             "completed_at": None,
             "smiles_list": smiles_list,
             "result_url": None,
+            "error_message": None,
             "results": [],
         }
 
@@ -152,8 +160,8 @@ class BatchProcessor:
         job["status"] = BatchPredictionStatus.PROCESSING.value
 
         # Update status in database if available
-        if supabase.is_configured:
-            await supabase.update_batch_job_status(
+        if self.supabase.is_configured:
+            await self.supabase.update_batch_job_status(
                 job_id, BatchPredictionStatus.PROCESSING.value
             )
 
@@ -176,8 +184,8 @@ class BatchProcessor:
                     }
 
                     # Insert into database if configured
-                    if supabase.is_configured:
-                        await supabase.store_batch_prediction_item(
+                    if self.supabase.is_configured:
+                        await self.supabase.store_batch_prediction_item(
                             batch_id=job_id,
                             smiles=smi,
                             probability=float(prob),
@@ -195,8 +203,8 @@ class BatchProcessor:
                     }
 
                     # Store error in database
-                    if supabase.is_configured:
-                        await supabase.store_batch_prediction_item(
+                    if self.supabase.is_configured:
+                        await self.supabase.store_batch_prediction_item(
                             batch_id=job_id,
                             smiles=smi,
                             probability=None,
@@ -213,9 +221,9 @@ class BatchProcessor:
 
                 # Update progress in database
                 if (
-                    supabase.is_configured and (i + 1) % 10 == 0
+                    self.supabase.is_configured and (i + 1) % 10 == 0
                 ):  # Update every 10 molecules
-                    await supabase.update_batch_job_progress(job_id, i + 1)
+                    await self.supabase.update_batch_job_progress(job_id, i + 1)
 
                 # Small delay to prevent overloading (and simulate processing time)
                 await asyncio.sleep(0.01)
@@ -225,12 +233,14 @@ class BatchProcessor:
 
             # Store results in Supabase Storage
             result_url = None
-            if supabase.is_configured:
+            if self.supabase.is_configured:
                 # Store CSV in Supabase Storage and get signed URL
                 logger.info(
                     f"Storing batch results in Supabase Storage for job {job_id}"
                 )
-                result_url = await supabase.store_batch_result_csv(job_id, csv_content)
+                result_url = await self.supabase.store_batch_result_csv(
+                    job_id, csv_content
+                )
 
                 if not result_url:
                     logger.warning(
@@ -251,8 +261,10 @@ class BatchProcessor:
             job["result_url"] = result_url
 
             # Update database
-            if supabase.is_configured:
-                await supabase.complete_batch_job(job_id=job_id, result_url=result_url)
+            if self.supabase.is_configured:
+                await self.supabase.complete_batch_job(
+                    job_id=job_id, result_url=result_url
+                )
 
             logger.info(f"Batch job {job_id} completed successfully")
 
@@ -265,8 +277,8 @@ class BatchProcessor:
             job["error_message"] = str(e)
 
             # Update database
-            if supabase.is_configured:
-                await supabase.fail_batch_job(job_id=job_id, error_message=str(e))
+            if self.supabase.is_configured:
+                await self.supabase.fail_batch_job(job_id=job_id, error_message=str(e))
 
     def get_job_status(self, job_id: str) -> Dict[str, Any]:
         """Get the status of a batch prediction job.

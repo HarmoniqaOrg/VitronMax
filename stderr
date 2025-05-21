@@ -807,3 +807,542 @@ id
 2025-05-20 22:24:10.194 | INFO     | app.main:predict_fp:127 - Processing prediction request for SMILES: CCO
 2025-05-20 22:24:10.284 | INFO     | app.main:predict_fp:131 - Prediction for CCO: 0.7959
 2025-05-20 22:24:10.530 | INFO     | app.main:generate_report:313 - Generating PDF report for SMILES: CCO
+2025-05-21 00:06:03.270 | INFO     | app.main:<module>:39 - Starting VitronMax in development environment
+2025-05-21 00:06:08.061 | INFO     | app.main:batch_predict_csv:166 - Received batch prediction request with file: test.csv
+2025-05-21 00:06:08.063 | INFO     | app.batch:start_batch_job:116 - Creating batch job in database: a4aacedf-00d2-486d-8bff-a13e1f4dfb1d
+2025-05-21 00:06:08.366 | INFO     | app.main:batch_predict_csv:166 - Received batch prediction request with file: invalid.csv
+2025-05-21 00:06:08.366 | WARNING  | app.main:batch_predict_csv:193 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 00:06:08.370 | INFO     | app.main:get_batch_status:213 - Checking status for batch job: test-job-456
+2025-05-21 00:06:08.372 | WARNING  | app.main:get_batch_status:229 - Job not found: test-job-456
+2025-05-21 00:06:08.381 | INFO     | app.main:get_batch_status:213 - Checking status for batch job: nonexistent-job
+2025-05-21 00:06:08.381 | WARNING  | app.main:get_batch_status:229 - Job not found: nonexistent-job
+2025-05-21 00:06:08.385 | INFO     | app.main:download_results:249 - Download request for batch job: test-job-789
+2025-05-21 00:06:08.385 | INFO     | app.main:download_results:276 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 00:06:08.392 | INFO     | app.main:download_results:249 - Download request for batch job: test-job-pending
+2025-05-21 00:06:08.392 | WARNING  | app.main:download_results:256 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 00:06:08.392 | ERROR    | app.main:download_results:296 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 00:06:08.443 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 00:06:08.443 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 00:08:09.001 | INFO     | app.main:<module>:39 - Starting VitronMax in development environment
+2025-05-21 00:08:09.962 | INFO     | app.main:batch_predict_csv:166 - Received batch prediction request with file: test.csv
+2025-05-21 00:08:09.963 | WARNING  | app.main:batch_predict_csv:193 - Invalid batch request: Job <AsyncMock name='start_batch_job()' id='2483103710288'> not found
+2025-05-21 00:08:10.251 | INFO     | app.main:batch_predict_csv:166 - Received batch prediction request with file: invalid.csv
+2025-05-21 00:08:10.251 | WARNING  | app.main:batch_predict_csv:193 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 00:08:10.256 | INFO     | app.main:get_batch_status:213 - Checking status for batch job: test-job-456
+2025-05-21 00:08:10.256 | WARNING  | app.main:get_batch_status:229 - Job not found: test-job-456
+2025-05-21 00:08:10.266 | INFO     | app.main:get_batch_status:213 - Checking status for batch job: nonexistent-job
+2025-05-21 00:08:10.266 | WARNING  | app.main:get_batch_status:229 - Job not found: nonexistent-job
+2025-05-21 00:08:10.270 | INFO     | app.main:download_results:249 - Download request for batch job: test-job-789
+2025-05-21 00:08:10.270 | INFO     | app.main:download_results:276 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 00:08:10.275 | INFO     | app.main:download_results:249 - Download request for batch job: test-job-pending
+2025-05-21 00:08:10.275 | WARNING  | app.main:download_results:256 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 00:08:10.275 | ERROR    | app.main:download_results:296 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 00:08:10.322 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 00:08:10.322 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 00:13:15.154 | INFO     | app.main:<module>:40 - Starting VitronMax in development environment
+2025-05-21 00:14:10.729 | INFO     | app.main:<module>:40 - Starting VitronMax in development environment
+2025-05-21 00:14:11.972 | INFO     | app.main:batch_predict_csv:168 - Received batch prediction request for file: invalid.csv
+2025-05-21 00:14:11.972 | WARNING  | app.main:batch_predict_csv:200 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 00:14:11.981 | INFO     | app.main:get_batch_status:223 - Checking status for batch job: 551e24ec-9ef1-49ef-8a3f-250b932badf6
+2025-05-21 00:14:11.986 | INFO     | app.main:get_batch_status:223 - Checking status for batch job: nonexistent-job
+2025-05-21 00:14:11.986 | WARNING  | app.main:get_batch_status:239 - Job not found: nonexistent-job
+2025-05-21 00:14:11.989 | INFO     | app.main:download_results:259 - Download request for batch job: test-job-789
+2025-05-21 00:14:11.991 | INFO     | app.main:download_results:286 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 00:14:11.996 | INFO     | app.main:download_results:259 - Download request for batch job: test-job-pending
+2025-05-21 00:14:11.996 | WARNING  | app.main:download_results:266 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 00:14:11.996 | ERROR    | app.main:download_results:306 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 00:14:12.032 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 00:14:12.033 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 00:14:26.933 | INFO     | app.main:<module>:40 - Starting VitronMax in development environment
+2025-05-21 00:14:27.878 | INFO     | app.main:batch_predict_csv:168 - Received batch prediction request for file: test.csv
+2025-05-21 00:14:27.884 | INFO     | app.main:batch_predict_csv:168 - Received batch prediction request for file: invalid.csv
+2025-05-21 00:14:27.884 | WARNING  | app.main:batch_predict_csv:200 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 00:14:27.889 | INFO     | app.main:get_batch_status:223 - Checking status for batch job: 2f139b5b-8919-4277-bf70-f9fceaa587c1
+2025-05-21 00:14:27.893 | INFO     | app.main:get_batch_status:223 - Checking status for batch job: nonexistent-job
+2025-05-21 00:14:27.893 | WARNING  | app.main:get_batch_status:239 - Job not found: nonexistent-job
+2025-05-21 00:14:27.893 | INFO     | app.main:download_results:259 - Download request for batch job: test-job-789
+2025-05-21 00:14:27.893 | INFO     | app.main:download_results:286 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 00:14:27.906 | INFO     | app.main:download_results:259 - Download request for batch job: test-job-pending
+2025-05-21 00:14:27.906 | WARNING  | app.main:download_results:266 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 00:14:27.906 | ERROR    | app.main:download_results:306 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 00:14:27.941 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 00:14:27.942 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 08:09:13.558 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 08:09:15.633 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:09:15.643 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: invalid.csv
+2025-05-21 08:09:15.644 | WARNING  | app.main:batch_predict_csv:205 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 08:09:15.648 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: a3f6e0d0-2108-4ccc-ae47-01bbde420ac3
+2025-05-21 08:09:15.656 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: nonexistent-job
+2025-05-21 08:09:15.657 | WARNING  | app.main:get_batch_status:244 - Job not found: nonexistent-job
+2025-05-21 08:09:15.663 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-789
+2025-05-21 08:09:15.663 | INFO     | app.main:download_results:291 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 08:09:15.672 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-pending
+2025-05-21 08:09:15.672 | WARNING  | app.main:download_results:271 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 08:09:15.672 | ERROR    | app.main:download_results:311 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 08:09:15.711 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 08:09:15.712 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 08:09:15.770 | INFO     | app.main:predict_fp:133 - Processing prediction request for SMILES: CCO
+2025-05-21 08:09:15.911 | INFO     | app.main:predict_fp:137 - Prediction for CCO: 0.7959
+2025-05-21 08:09:16.406 | INFO     | app.main:generate_report:328 - Generating PDF report for SMILES: CCO
+2025-05-21 08:10:43.086 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 08:10:44.621 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:10:44.629 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: invalid.csv
+2025-05-21 08:10:44.629 | WARNING  | app.main:batch_predict_csv:205 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 08:10:44.637 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: a4290bbe-17ee-475b-b1a2-1229f75d753d
+2025-05-21 08:10:44.643 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: nonexistent-job
+2025-05-21 08:10:44.643 | WARNING  | app.main:get_batch_status:244 - Job not found: nonexistent-job
+2025-05-21 08:10:44.651 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-789
+2025-05-21 08:10:44.651 | INFO     | app.main:download_results:291 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 08:10:44.660 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-pending
+2025-05-21 08:10:44.660 | WARNING  | app.main:download_results:271 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 08:10:44.660 | ERROR    | app.main:download_results:311 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 08:10:44.708 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 08:10:44.710 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 08:10:44.769 | INFO     | app.main:predict_fp:133 - Processing prediction request for SMILES: CCO
+2025-05-21 08:10:44.901 | INFO     | app.main:predict_fp:137 - Prediction for CCO: 0.7959
+2025-05-21 08:10:45.378 | INFO     | app.main:generate_report:328 - Generating PDF report for SMILES: CCO
+2025-05-21 08:20:59.128 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 08:21:00.626 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:21:00.634 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: invalid.csv
+2025-05-21 08:21:00.634 | WARNING  | app.main:batch_predict_csv:205 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 08:21:00.641 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: fd7a0cac-6ea9-4a71-8269-8f6eaca10e09
+2025-05-21 08:21:00.648 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: nonexistent-job
+2025-05-21 08:21:00.649 | WARNING  | app.main:get_batch_status:244 - Job not found: nonexistent-job
+2025-05-21 08:21:00.655 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-789
+2025-05-21 08:21:00.655 | INFO     | app.main:download_results:291 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 08:21:00.664 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-pending
+2025-05-21 08:21:00.665 | WARNING  | app.main:download_results:271 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 08:21:00.665 | ERROR    | app.main:download_results:311 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 08:21:00.727 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 08:21:00.729 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 08:21:22.234 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 08:21:46.772 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 08:21:48.260 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:21:48.271 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: invalid.csv
+2025-05-21 08:21:48.272 | WARNING  | app.main:batch_predict_csv:205 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 08:21:48.279 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: 96b5bec8-d261-4c3b-be1e-e260dfff1129
+2025-05-21 08:21:48.282 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: nonexistent-job
+2025-05-21 08:21:48.282 | WARNING  | app.main:get_batch_status:244 - Job not found: nonexistent-job
+2025-05-21 08:21:48.293 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-789
+2025-05-21 08:21:48.293 | INFO     | app.main:download_results:291 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 08:21:48.301 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-pending
+2025-05-21 08:21:48.301 | WARNING  | app.main:download_results:271 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 08:21:48.301 | ERROR    | app.main:download_results:311 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 08:21:48.357 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 08:21:48.358 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 08:22:17.410 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 08:22:18.935 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:22:18.944 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: invalid.csv
+2025-05-21 08:22:18.945 | WARNING  | app.main:batch_predict_csv:205 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 08:22:18.952 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: ecbed49f-e2b6-4936-8a80-7feaffe9a72f
+2025-05-21 08:22:18.957 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: nonexistent-job
+2025-05-21 08:22:18.957 | WARNING  | app.main:get_batch_status:244 - Job not found: nonexistent-job
+2025-05-21 08:22:18.965 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-789
+2025-05-21 08:22:18.965 | INFO     | app.main:download_results:291 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 08:22:18.974 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-pending
+2025-05-21 08:22:18.974 | WARNING  | app.main:download_results:271 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 08:22:18.974 | ERROR    | app.main:download_results:311 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 08:22:19.017 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 08:22:19.018 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 08:22:19.488 | INFO     | app.main:predict_fp:133 - Processing prediction request for SMILES: CCO
+2025-05-21 08:22:19.628 | INFO     | app.main:predict_fp:137 - Prediction for CCO: 0.7959
+2025-05-21 08:22:20.110 | INFO     | app.main:generate_report:328 - Generating PDF report for SMILES: CCO
+2025-05-21 08:24:19.656 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 08:24:21.160 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:24:21.172 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: invalid.csv
+2025-05-21 08:24:21.172 | WARNING  | app.main:batch_predict_csv:205 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 08:24:21.179 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: d33210cf-b38f-4704-a15f-1fc7826e48f8
+2025-05-21 08:24:21.185 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: nonexistent-job
+2025-05-21 08:24:21.186 | WARNING  | app.main:get_batch_status:244 - Job not found: nonexistent-job
+2025-05-21 08:24:21.191 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-789
+2025-05-21 08:24:21.191 | INFO     | app.main:download_results:291 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 08:24:21.201 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-pending
+2025-05-21 08:24:21.201 | WARNING  | app.main:download_results:271 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 08:24:21.202 | ERROR    | app.main:download_results:311 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 08:24:21.250 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 08:24:21.252 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 08:24:22.346 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:24:43.142 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 08:24:44.622 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:24:44.632 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: invalid.csv
+2025-05-21 08:24:44.632 | WARNING  | app.main:batch_predict_csv:205 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 08:24:44.639 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: 8552f188-42a0-4baa-b763-814b8ff31c3d
+2025-05-21 08:24:44.646 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: nonexistent-job
+2025-05-21 08:24:44.646 | WARNING  | app.main:get_batch_status:244 - Job not found: nonexistent-job
+2025-05-21 08:24:44.652 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-789
+2025-05-21 08:24:44.652 | INFO     | app.main:download_results:291 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 08:24:44.661 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-pending
+2025-05-21 08:24:44.661 | WARNING  | app.main:download_results:271 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 08:24:44.661 | ERROR    | app.main:download_results:311 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 08:24:44.715 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 08:24:44.716 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 08:24:45.807 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:25:16.873 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 08:25:18.353 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:25:18.368 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: invalid.csv
+2025-05-21 08:25:18.368 | WARNING  | app.main:batch_predict_csv:205 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 08:25:18.374 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: 11b8d645-176f-4b0c-b9ff-f045fd5124cf
+2025-05-21 08:25:18.381 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: nonexistent-job
+2025-05-21 08:25:18.382 | WARNING  | app.main:get_batch_status:244 - Job not found: nonexistent-job
+2025-05-21 08:25:18.388 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-789
+2025-05-21 08:25:18.389 | INFO     | app.main:download_results:291 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 08:25:18.396 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-pending
+2025-05-21 08:25:18.396 | WARNING  | app.main:download_results:271 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 08:25:18.398 | ERROR    | app.main:download_results:311 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 08:25:18.443 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 08:25:18.445 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 08:25:19.139 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:26:00.120 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 08:26:01.616 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:26:01.625 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: invalid.csv
+2025-05-21 08:26:01.626 | WARNING  | app.main:batch_predict_csv:205 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 08:26:01.632 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: 344196f4-c062-4aca-8fc2-690d2d6378cf
+2025-05-21 08:26:01.639 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: nonexistent-job
+2025-05-21 08:26:01.639 | WARNING  | app.main:get_batch_status:244 - Job not found: nonexistent-job
+2025-05-21 08:26:01.646 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-789
+2025-05-21 08:26:01.646 | INFO     | app.main:download_results:291 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 08:26:01.649 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-pending
+2025-05-21 08:26:01.649 | WARNING  | app.main:download_results:271 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 08:26:01.649 | ERROR    | app.main:download_results:311 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 08:26:01.707 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 08:26:01.708 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 08:26:02.616 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:27:31.444 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 08:27:32.932 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:27:32.941 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: invalid.csv
+2025-05-21 08:27:32.941 | WARNING  | app.main:batch_predict_csv:205 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 08:27:32.947 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: 5a846917-d5f4-498b-b28d-80ca5df547eb
+2025-05-21 08:27:32.951 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: nonexistent-job
+2025-05-21 08:27:32.951 | WARNING  | app.main:get_batch_status:244 - Job not found: nonexistent-job
+2025-05-21 08:27:32.960 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-789
+2025-05-21 08:27:32.960 | INFO     | app.main:download_results:291 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 08:27:32.968 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-pending
+2025-05-21 08:27:32.968 | WARNING  | app.main:download_results:271 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 08:27:32.968 | ERROR    | app.main:download_results:311 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 08:27:33.011 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 08:27:33.011 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 08:27:34.115 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:27:57.276 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 08:27:58.761 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:27:58.770 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: invalid.csv
+2025-05-21 08:27:58.770 | WARNING  | app.main:batch_predict_csv:205 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 08:27:58.778 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: 33c17f86-5aa8-448b-ac5a-80c03ace69d5
+2025-05-21 08:27:58.784 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: nonexistent-job
+2025-05-21 08:27:58.784 | WARNING  | app.main:get_batch_status:244 - Job not found: nonexistent-job
+2025-05-21 08:27:58.791 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-789
+2025-05-21 08:27:58.792 | INFO     | app.main:download_results:291 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 08:27:58.798 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-pending
+2025-05-21 08:27:58.798 | WARNING  | app.main:download_results:271 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 08:27:58.798 | ERROR    | app.main:download_results:311 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 08:27:58.842 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 08:27:58.844 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 08:27:59.934 | ERROR    | app.batch:validate_csv:87 - Error validating CSV: mocked generic read error
+2025-05-21 08:27:59.948 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:28:19.961 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 08:28:21.468 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:28:21.477 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: invalid.csv
+2025-05-21 08:28:21.477 | WARNING  | app.main:batch_predict_csv:205 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 08:28:21.484 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: b8d9b919-580d-4f28-9cc6-9a1aa44f1b1e
+2025-05-21 08:28:21.491 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: nonexistent-job
+2025-05-21 08:28:21.492 | WARNING  | app.main:get_batch_status:244 - Job not found: nonexistent-job
+2025-05-21 08:28:21.498 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-789
+2025-05-21 08:28:21.498 | INFO     | app.main:download_results:291 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 08:28:21.506 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-pending
+2025-05-21 08:28:21.507 | WARNING  | app.main:download_results:271 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 08:28:21.507 | ERROR    | app.main:download_results:311 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 08:28:21.554 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 08:28:21.556 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 08:28:22.832 | ERROR    | app.batch:validate_csv:87 - Error validating CSV: mocked generic read error
+2025-05-21 08:28:22.850 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:35:02.303 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 08:35:03.818 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:35:03.828 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: invalid.csv
+2025-05-21 08:35:03.828 | WARNING  | app.main:batch_predict_csv:205 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 08:35:03.834 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: e0314a9d-0ae5-4879-8fdf-0afb81effb21
+2025-05-21 08:35:03.841 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: nonexistent-job
+2025-05-21 08:35:03.841 | WARNING  | app.main:get_batch_status:244 - Job not found: nonexistent-job
+2025-05-21 08:35:03.848 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-789
+2025-05-21 08:35:03.848 | INFO     | app.main:download_results:291 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 08:35:03.858 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-pending
+2025-05-21 08:35:03.858 | WARNING  | app.main:download_results:271 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 08:35:03.858 | ERROR    | app.main:download_results:311 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 08:35:03.902 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 08:35:03.903 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 08:35:05.185 | ERROR    | app.batch:validate_csv:87 - Error validating CSV: mocked generic read error
+2025-05-21 08:35:05.204 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:43:21.370 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 08:43:22.899 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:43:22.906 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: invalid.csv
+2025-05-21 08:43:22.906 | WARNING  | app.main:batch_predict_csv:205 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 08:43:22.916 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: 9b5ebdcc-b5a9-4ffc-88d8-4bdea82bd4ab
+2025-05-21 08:43:22.922 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: nonexistent-job
+2025-05-21 08:43:22.922 | WARNING  | app.main:get_batch_status:244 - Job not found: nonexistent-job
+2025-05-21 08:43:22.929 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-789
+2025-05-21 08:43:22.929 | INFO     | app.main:download_results:291 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 08:43:22.937 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-pending
+2025-05-21 08:43:22.937 | WARNING  | app.main:download_results:271 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 08:43:22.937 | ERROR    | app.main:download_results:311 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 08:43:22.986 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 08:43:22.987 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 08:43:24.316 | ERROR    | app.batch:validate_csv:87 - Error validating CSV: mocked generic read error
+2025-05-21 08:43:24.332 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:43:26.699 | INFO     | app.main:predict_fp:133 - Processing prediction request for SMILES: CCO
+2025-05-21 08:43:26.832 | INFO     | app.main:predict_fp:137 - Prediction for CCO: 0.7959
+2025-05-21 08:43:27.284 | INFO     | app.main:generate_report:328 - Generating PDF report for SMILES: CCO
+2025-05-21 08:47:12.071 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 08:47:13.576 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:47:13.583 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: invalid.csv
+2025-05-21 08:47:13.587 | WARNING  | app.main:batch_predict_csv:205 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 08:47:13.593 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: 4ab23f43-04b0-48b3-9f6e-4e367d96e6b9
+2025-05-21 08:47:13.599 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: nonexistent-job
+2025-05-21 08:47:13.599 | WARNING  | app.main:get_batch_status:244 - Job not found: nonexistent-job
+2025-05-21 08:47:13.607 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-789
+2025-05-21 08:47:13.607 | INFO     | app.main:download_results:291 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 08:47:13.615 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-pending
+2025-05-21 08:47:13.615 | WARNING  | app.main:download_results:271 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 08:47:13.615 | ERROR    | app.main:download_results:311 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 08:47:13.662 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 08:47:13.663 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 08:47:14.983 | ERROR    | app.batch:validate_csv:87 - Error validating CSV: mocked generic read error
+2025-05-21 08:47:14.999 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:47:17.585 | INFO     | app.main:predict_fp:133 - Processing prediction request for SMILES: CCO
+2025-05-21 08:47:17.720 | INFO     | app.main:predict_fp:137 - Prediction for CCO: 0.7959
+2025-05-21 08:47:18.240 | INFO     | app.main:generate_report:328 - Generating PDF report for SMILES: CCO
+2025-05-21 08:49:38.037 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 08:49:39.539 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:49:39.549 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: invalid.csv
+2025-05-21 08:49:39.549 | WARNING  | app.main:batch_predict_csv:205 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 08:49:39.554 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: 1fd3b22a-5f7b-4924-81d3-f33b7e411156
+2025-05-21 08:49:39.560 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: nonexistent-job
+2025-05-21 08:49:39.560 | WARNING  | app.main:get_batch_status:244 - Job not found: nonexistent-job
+2025-05-21 08:49:39.568 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-789
+2025-05-21 08:49:39.568 | INFO     | app.main:download_results:291 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 08:49:39.575 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-pending
+2025-05-21 08:49:39.575 | WARNING  | app.main:download_results:271 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 08:49:39.575 | ERROR    | app.main:download_results:311 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 08:49:39.625 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 08:49:39.625 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 08:49:40.964 | ERROR    | app.batch:validate_csv:87 - Error validating CSV: mocked generic read error
+2025-05-21 08:49:40.975 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:49:43.525 | INFO     | app.main:predict_fp:133 - Processing prediction request for SMILES: CCO
+2025-05-21 08:49:43.661 | INFO     | app.main:predict_fp:137 - Prediction for CCO: 0.7959
+2025-05-21 08:49:44.109 | INFO     | app.main:generate_report:328 - Generating PDF report for SMILES: CCO
+2025-05-21 08:54:01.366 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 08:54:02.303 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:54:02.310 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: invalid.csv
+2025-05-21 08:54:02.310 | WARNING  | app.main:batch_predict_csv:205 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 08:54:02.316 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: 0889685a-5f5a-455d-a859-0e080c53c3d7
+2025-05-21 08:54:02.320 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: nonexistent-job
+2025-05-21 08:54:02.320 | WARNING  | app.main:get_batch_status:244 - Job not found: nonexistent-job
+2025-05-21 08:54:02.322 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-789
+2025-05-21 08:54:02.322 | INFO     | app.main:download_results:291 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 08:54:02.331 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-pending
+2025-05-21 08:54:02.331 | WARNING  | app.main:download_results:271 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 08:54:02.331 | ERROR    | app.main:download_results:311 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 08:54:02.374 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 08:54:02.375 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 08:54:03.003 | ERROR    | app.batch:validate_csv:87 - Error validating CSV: mocked generic read error
+2025-05-21 08:54:03.016 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:54:04.399 | INFO     | app.main:predict_fp:133 - Processing prediction request for SMILES: CCO
+2025-05-21 08:54:04.486 | INFO     | app.main:predict_fp:137 - Prediction for CCO: 0.7959
+2025-05-21 08:54:04.735 | INFO     | app.main:generate_report:328 - Generating PDF report for SMILES: CCO
+2025-05-21 08:56:24.286 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 08:56:25.230 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:56:25.235 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: invalid.csv
+2025-05-21 08:56:25.235 | WARNING  | app.main:batch_predict_csv:205 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 08:56:25.239 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: a234cb17-f986-420a-86de-225aef03a211
+2025-05-21 08:56:25.244 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: nonexistent-job
+2025-05-21 08:56:25.244 | WARNING  | app.main:get_batch_status:244 - Job not found: nonexistent-job
+2025-05-21 08:56:25.249 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-789
+2025-05-21 08:56:25.250 | INFO     | app.main:download_results:291 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 08:56:25.254 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-pending
+2025-05-21 08:56:25.254 | WARNING  | app.main:download_results:271 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 08:56:25.254 | ERROR    | app.main:download_results:311 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 08:56:25.298 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 08:56:25.298 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 08:56:25.914 | ERROR    | app.batch:validate_csv:87 - Error validating CSV: mocked generic read error
+2025-05-21 08:56:25.929 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:56:27.279 | INFO     | app.main:predict_fp:133 - Processing prediction request for SMILES: CCO
+2025-05-21 08:56:27.366 | INFO     | app.main:predict_fp:137 - Prediction for CCO: 0.7959
+2025-05-21 08:56:27.607 | INFO     | app.main:generate_report:328 - Generating PDF report for SMILES: CCO
+2025-05-21 08:57:59.575 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 08:58:00.520 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:58:00.527 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: invalid.csv
+2025-05-21 08:58:00.527 | WARNING  | app.main:batch_predict_csv:205 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 08:58:00.532 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: 366b4b2c-1dd4-41fb-885a-6080b732e79a
+2025-05-21 08:58:00.536 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: nonexistent-job
+2025-05-21 08:58:00.536 | WARNING  | app.main:get_batch_status:244 - Job not found: nonexistent-job
+2025-05-21 08:58:00.542 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-789
+2025-05-21 08:58:00.542 | INFO     | app.main:download_results:291 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 08:58:00.547 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-pending
+2025-05-21 08:58:00.547 | WARNING  | app.main:download_results:271 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 08:58:00.547 | ERROR    | app.main:download_results:311 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 08:58:00.607 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 08:58:00.608 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 08:58:01.240 | ERROR    | app.batch:validate_csv:87 - Error validating CSV: mocked generic read error
+2025-05-21 08:58:01.252 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:58:02.604 | INFO     | app.main:predict_fp:133 - Processing prediction request for SMILES: CCO
+2025-05-21 08:58:02.692 | INFO     | app.main:predict_fp:137 - Prediction for CCO: 0.7959
+2025-05-21 08:58:02.930 | INFO     | app.main:generate_report:328 - Generating PDF report for SMILES: CCO
+2025-05-21 08:58:37.104 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 08:58:38.058 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:58:38.065 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: invalid.csv
+2025-05-21 08:58:38.065 | WARNING  | app.main:batch_predict_csv:205 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 08:58:38.069 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: 9fe3583c-7589-4764-b4ee-f30cf790514d
+2025-05-21 08:58:38.074 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: nonexistent-job
+2025-05-21 08:58:38.074 | WARNING  | app.main:get_batch_status:244 - Job not found: nonexistent-job
+2025-05-21 08:58:38.080 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-789
+2025-05-21 08:58:38.080 | INFO     | app.main:download_results:291 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 08:58:38.084 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-pending
+2025-05-21 08:58:38.085 | WARNING  | app.main:download_results:271 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 08:58:38.085 | ERROR    | app.main:download_results:311 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 08:58:38.141 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 08:58:38.142 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 08:58:38.755 | ERROR    | app.batch:validate_csv:87 - Error validating CSV: mocked generic read error
+2025-05-21 08:58:38.769 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 08:58:40.060 | INFO     | app.main:predict_fp:133 - Processing prediction request for SMILES: CCO
+2025-05-21 08:58:40.162 | INFO     | app.main:predict_fp:137 - Prediction for CCO: 0.7959
+2025-05-21 08:58:40.405 | INFO     | app.main:generate_report:328 - Generating PDF report for SMILES: CCO
+2025-05-21 08:59:59.250 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 17:09:51.065 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 17:10:22.506 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 17:10:23.468 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 17:10:23.479 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: invalid.csv
+2025-05-21 17:10:23.479 | WARNING  | app.main:batch_predict_csv:205 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 17:10:23.483 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: 39793050-7c4f-43b7-9743-2f4ba13ab568
+2025-05-21 17:10:23.488 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: nonexistent-job
+2025-05-21 17:10:23.488 | WARNING  | app.main:get_batch_status:244 - Job not found: nonexistent-job
+2025-05-21 17:10:23.488 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-789
+2025-05-21 17:10:23.488 | INFO     | app.main:download_results:291 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 17:10:23.499 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-pending
+2025-05-21 17:10:23.499 | WARNING  | app.main:download_results:271 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 17:10:23.499 | ERROR    | app.main:download_results:311 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 17:10:23.557 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 17:10:23.558 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 17:10:24.188 | ERROR    | app.batch:validate_csv:87 - Error validating CSV: mocked generic read error
+2025-05-21 17:10:24.197 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 17:10:25.446 | INFO     | app.main:predict_fp:133 - Processing prediction request for SMILES: CCO
+2025-05-21 17:10:25.551 | INFO     | app.main:predict_fp:137 - Prediction for CCO: 0.7959
+2025-05-21 17:10:25.869 | INFO     | app.main:generate_report:328 - Generating PDF report for SMILES: CCO
+2025-05-21 17:11:06.716 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 17:11:07.643 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 17:11:07.649 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: invalid.csv
+2025-05-21 17:11:07.649 | WARNING  | app.main:batch_predict_csv:205 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 17:11:07.653 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: a8dbe756-1b44-49b3-94b7-8182d14525b3
+2025-05-21 17:11:07.657 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: nonexistent-job
+2025-05-21 17:11:07.657 | WARNING  | app.main:get_batch_status:244 - Job not found: nonexistent-job
+2025-05-21 17:11:07.661 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-789
+2025-05-21 17:11:07.661 | INFO     | app.main:download_results:291 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 17:11:07.667 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-pending
+2025-05-21 17:11:07.667 | WARNING  | app.main:download_results:271 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 17:11:07.667 | ERROR    | app.main:download_results:311 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 17:11:07.724 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 17:11:07.725 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 17:11:08.389 | ERROR    | app.batch:validate_csv:87 - Error validating CSV: mocked generic read error
+2025-05-21 17:11:08.404 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 17:11:09.641 | INFO     | app.main:predict_fp:133 - Processing prediction request for SMILES: CCO
+2025-05-21 17:11:09.731 | INFO     | app.main:predict_fp:137 - Prediction for CCO: 0.7959
+2025-05-21 17:11:09.974 | INFO     | app.main:generate_report:328 - Generating PDF report for SMILES: CCO
+2025-05-21 17:12:19.028 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 17:12:19.979 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 17:12:19.985 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: invalid.csv
+2025-05-21 17:12:19.985 | WARNING  | app.main:batch_predict_csv:205 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 17:12:19.990 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: 23878254-e788-42d7-b8a8-a0fc0d7afaa1
+2025-05-21 17:12:19.995 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: nonexistent-job
+2025-05-21 17:12:19.995 | WARNING  | app.main:get_batch_status:244 - Job not found: nonexistent-job
+2025-05-21 17:12:20.000 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-789
+2025-05-21 17:12:20.000 | INFO     | app.main:download_results:291 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 17:12:20.005 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-pending
+2025-05-21 17:12:20.005 | WARNING  | app.main:download_results:271 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 17:12:20.005 | ERROR    | app.main:download_results:311 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 17:12:20.042 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 17:12:20.042 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 17:12:20.667 | ERROR    | app.batch:validate_csv:87 - Error validating CSV: mocked generic read error
+2025-05-21 17:12:20.681 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 17:12:21.917 | INFO     | app.main:predict_fp:133 - Processing prediction request for SMILES: CCO
+2025-05-21 17:12:22.005 | INFO     | app.main:predict_fp:137 - Prediction for CCO: 0.7959
+2025-05-21 17:12:22.238 | INFO     | app.main:generate_report:328 - Generating PDF report for SMILES: CCO
+2025-05-21 17:23:11.233 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 17:23:12.182 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 17:23:12.188 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: invalid.csv
+2025-05-21 17:23:12.188 | WARNING  | app.main:batch_predict_csv:205 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 17:23:12.193 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: ffbc35a1-fe48-40b4-9f9e-5f96068dfd04
+2025-05-21 17:23:12.198 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: nonexistent-job
+2025-05-21 17:23:12.198 | WARNING  | app.main:get_batch_status:244 - Job not found: nonexistent-job
+2025-05-21 17:23:12.204 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-789
+2025-05-21 17:23:12.204 | INFO     | app.main:download_results:291 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 17:23:12.209 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-pending
+2025-05-21 17:23:12.209 | WARNING  | app.main:download_results:271 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 17:23:12.209 | ERROR    | app.main:download_results:311 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 17:23:12.247 | INFO     | app.batch:process_batch_job:230 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 17:23:12.248 | INFO     | app.batch:process_batch_job:257 - Batch job test-storage-job-123 completed successfully
+2025-05-21 17:23:12.874 | ERROR    | app.batch:validate_csv:87 - Error validating CSV: mocked generic read error
+2025-05-21 17:23:12.888 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 17:23:13.788 | ERROR    | app.db:_post_json:66 - Supabase POST %s → %s – %s
+2025-05-21 17:24:08.096 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 17:24:09.041 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 17:24:09.048 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: invalid.csv
+2025-05-21 17:24:09.048 | WARNING  | app.main:batch_predict_csv:205 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 17:24:09.053 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: 7ee92ffe-d897-4daa-ab9d-7f5c2f8cf726
+2025-05-21 17:24:09.058 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: nonexistent-job
+2025-05-21 17:24:09.058 | WARNING  | app.main:get_batch_status:244 - Job not found: nonexistent-job
+2025-05-21 17:24:09.063 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-789
+2025-05-21 17:24:09.063 | INFO     | app.main:download_results:291 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 17:24:09.067 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-pending
+2025-05-21 17:24:09.069 | WARNING  | app.main:download_results:271 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 17:24:09.069 | ERROR    | app.main:download_results:311 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 17:24:09.185 | ERROR    | app.db:_patch_json:83 - Supabase PATCH %s → %s – %s
+2025-05-21 17:24:09.314 | ERROR    | app.db:_post_json:66 - Supabase POST %s → %s – %s
+2025-05-21 17:24:09.447 | ERROR    | app.db:_post_json:66 - Supabase POST %s → %s – %s
+2025-05-21 17:24:09.462 | INFO     | app.batch:process_batch_job:232 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 17:24:09.760 | ERROR    | app.db:store_batch_result_csv:223 - Upload failed → %s %s
+2025-05-21 17:24:09.760 | WARNING  | app.batch:process_batch_job:238 - Failed to store batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 17:24:09.843 | ERROR    | app.db:_patch_json:83 - Supabase PATCH %s → %s – %s
+2025-05-21 17:24:09.843 | INFO     | app.batch:process_batch_job:259 - Batch job test-storage-job-123 completed successfully
+2025-05-21 17:24:10.840 | ERROR    | app.batch:validate_csv:88 - Error validating CSV: mocked generic read error
+2025-05-21 17:24:10.853 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 17:24:11.650 | ERROR    | app.db:_post_json:66 - Supabase POST %s → %s – %s
+2025-05-21 17:24:11.731 | ERROR    | app.db:_post_json:66 - Supabase POST %s → %s – %s
+2025-05-21 17:24:12.871 | ERROR    | app.db:_post_json:66 - Supabase POST %s → %s – %s
+2025-05-21 17:24:12.948 | ERROR    | app.db:_post_json:66 - Supabase POST %s → %s – %s
+2025-05-21 17:24:13.039 | ERROR    | app.db:_post_json:66 - Supabase POST %s → %s – %s
+2025-05-21 17:24:14.203 | ERROR    | app.db:_post_json:66 - Supabase POST %s → %s – %s
+2025-05-21 17:24:14.339 | ERROR    | app.db:_post_json:66 - Supabase POST %s → %s – %s
+2025-05-21 17:26:16.544 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 17:26:17.469 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 17:26:17.478 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: invalid.csv
+2025-05-21 17:26:17.478 | WARNING  | app.main:batch_predict_csv:205 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 17:26:17.485 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: 2163a06d-f044-4831-827f-c7b63dd0dbb0
+2025-05-21 17:26:17.490 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: nonexistent-job
+2025-05-21 17:26:17.490 | WARNING  | app.main:get_batch_status:244 - Job not found: nonexistent-job
+2025-05-21 17:26:17.496 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-789
+2025-05-21 17:26:17.496 | INFO     | app.main:download_results:291 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 17:26:17.502 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-pending
+2025-05-21 17:26:17.502 | WARNING  | app.main:download_results:271 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 17:26:17.502 | ERROR    | app.main:download_results:311 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 17:26:17.800 | ERROR    | app.db:_patch_json:83 - Supabase PATCH %s → %s – %s
+2025-05-21 17:26:17.883 | ERROR    | app.db:_post_json:66 - Supabase POST %s → %s – %s
+2025-05-21 17:26:17.983 | ERROR    | app.db:_post_json:66 - Supabase POST %s → %s – %s
+2025-05-21 17:26:18.006 | INFO     | app.batch:process_batch_job:238 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 17:26:18.300 | ERROR    | app.db:store_batch_result_csv:223 - Upload failed → %s %s
+2025-05-21 17:26:18.300 | WARNING  | app.batch:process_batch_job:244 - Failed to store batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 17:26:18.362 | ERROR    | app.db:_patch_json:83 - Supabase PATCH %s → %s – %s
+2025-05-21 17:26:18.362 | INFO     | app.batch:process_batch_job:265 - Batch job test-storage-job-123 completed successfully
+2025-05-21 17:26:19.350 | ERROR    | app.batch:validate_csv:88 - Error validating CSV: mocked generic read error
+2025-05-21 17:26:19.363 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 17:28:51.408 | INFO     | app.main:<module>:45 - Starting VitronMax in development environment
+2025-05-21 17:28:52.335 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
+2025-05-21 17:28:52.340 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: invalid.csv
+2025-05-21 17:28:52.340 | WARNING  | app.main:batch_predict_csv:205 - Invalid batch request: Could not find SMILES column in CSV header
+2025-05-21 17:28:52.346 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: 32821454-8d96-413c-9968-35fdea66a24a
+2025-05-21 17:28:52.351 | INFO     | app.main:get_batch_status:228 - Checking status for batch job: nonexistent-job
+2025-05-21 17:28:52.351 | WARNING  | app.main:get_batch_status:244 - Job not found: nonexistent-job
+2025-05-21 17:28:52.355 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-789
+2025-05-21 17:28:52.355 | INFO     | app.main:download_results:291 - Generating CSV from in-memory results for job test-job-789
+2025-05-21 17:28:52.361 | INFO     | app.main:download_results:264 - Download request for batch job: test-job-pending
+2025-05-21 17:28:52.361 | WARNING  | app.main:download_results:271 - Cannot download results for job test-job-pending: Job not completed
+2025-05-21 17:28:52.361 | ERROR    | app.main:download_results:311 - Error generating download: 400: Cannot download results for incomplete job. Status: processing
+2025-05-21 17:28:52.398 | INFO     | app.batch:process_batch_job:238 - Storing batch results in Supabase Storage for job test-storage-job-123
+2025-05-21 17:28:52.399 | INFO     | app.batch:process_batch_job:265 - Batch job test-storage-job-123 completed successfully
+2025-05-21 17:28:53.020 | ERROR    | app.batch:validate_csv:88 - Error validating CSV: mocked generic read error
+2025-05-21 17:28:53.034 | INFO     | app.main:batch_predict_csv:173 - Received batch prediction request for file: test.csv
