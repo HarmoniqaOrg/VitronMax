@@ -8,6 +8,7 @@ from datetime import datetime
 from typing import Dict, Union, AsyncGenerator
 from uuid import UUID
 from contextlib import asynccontextmanager
+import uvicorn
 
 from fastapi import (
     FastAPI,
@@ -16,7 +17,6 @@ from fastapi import (
     UploadFile,
     File,
 )
-from fastapi import status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse, RedirectResponse
 from loguru import logger
@@ -28,6 +28,7 @@ from app.models import (
     PredictionResponse,
     BatchPredictionResponse,
     BatchPredictionStatusResponse,
+    BatchPredictionStatus,  # Import BatchPredictionStatus enum
 )
 from app.predict import BBBPredictor
 from app.batch import BatchProcessor
@@ -102,13 +103,53 @@ async def global_exception_handler(request: Request, exc: Exception) -> JSONResp
 predictor = BBBPredictor()
 
 # Initialize the batch processor
-batch_processor = BatchProcessor(predictor=predictor)
+batch_processor = BatchProcessor(predictor=predictor, supabase_client=supabase)
 
 
-@app.get("/")
-def root() -> Dict[str, str]:
-    """Root endpoint that returns service information."""
-    return {"message": "Welcome to VitronMax API", "version": "1.0"}
+@app.get("/", response_class=RedirectResponse, include_in_schema=False)
+async def root(request: Request):
+    # Redirect root to /docs for API documentation
+    return RedirectResponse(url="/docs")
+
+
+@app.get("/api/v1/batch/job_status/{job_id}", response_model=BatchPredictionStatusResponse, tags=["batch"])
+async def get_batch_job_status(job_id: str) -> BatchPredictionStatusResponse:
+    """Get the status of a batch prediction job."""
+    logger.info(f"Received status request for job ID: {job_id}")
+    try:
+        # Convert string job_id to UUID if your BatchProcessor expects UUID
+        # If BatchProcessor.get_job_status expects a string, no conversion needed.
+        # Assuming BatchProcessor.get_job_status handles string job_id directly
+        # and returns a dict compatible with BatchPredictionStatusResponse.
+        status_data = batch_processor.get_job_status(job_id)
+
+        # Ensure the status_data dict matches the BatchPredictionStatusResponse model fields
+        # The BatchProcessor.get_job_status should return a dictionary like:
+        # {
+        #     "job_id": "some-uuid-string",
+        #     "status": "COMPLETED", # or other BatchPredictionStatus enum value
+        #     "total_molecules": 100,
+        #     "processed_molecules": 100,
+        #     "created_at": "iso-datetime-string",
+        #     "completed_at": "iso-datetime-string" or None,
+        #     "result_url": "url-string" or None,
+        #     "error_message": "error-string" or None
+        # }
+        # The Pydantic model will handle validation and conversion (e.g., string to enum for status)
+        return BatchPredictionStatusResponse(**status_data)
+    except KeyError:
+        logger.warning(f"Job ID {job_id} not found for status check.")
+        # Return a well-defined "NOT_FOUND" status if appropriate for the frontend
+        # For now, re-raising as HTTPException to match previous get_batch_status behavior
+        # but ideally, the frontend should handle a specific NOT_FOUND status from get_job_status
+        # For consistency with how BatchProcessor.get_job_status might work (returning a dict with 'status': 'NOT_FOUND')
+        # we can construct a NOT_FOUND response here.
+        # However, the current BatchPredictionStatusResponse doesn't have NOT_FOUND as a status.
+        # Let's assume get_job_status raises KeyError for not found, and we convert to 404.
+        raise HTTPException(status_code=404, detail=f"Job ID {job_id} not found")
+    except Exception as e:
+        logger.error(f"Error retrieving status for job ID {job_id}: {e}")
+        raise HTTPException(status_code=500, detail=f"Error retrieving status for job {job_id}: {str(e)}")
 
 
 @app.get("/healthz", tags=["health"])
@@ -149,28 +190,27 @@ async def predict_fp(request: PredictionRequest) -> PredictionResponse:
         raise HTTPException(status_code=400, detail=str(exc))
 
 
-@app.post("/batch_predict_csv", response_model=BatchPredictionResponse)
-async def batch_predict_csv(
+@app.post(
+    "/api/v1/batch/predict_csv",
+    response_model=BatchPredictionResponse,
+    status_code=status.HTTP_202_ACCEPTED,
+    tags=["batch"],
+    summary="Submit a CSV file for batch BBB permeability prediction",
+    description="Accepts a CSV file containing SMILES strings, processes them asynchronously, "
+    "and returns a job ID for status tracking and result retrieval.",
+    name="batch_predict_csv"
+)
+async def submit_batch_predict_csv(
     file: UploadFile = File(...),
 ) -> BatchPredictionResponse:
-    """Process a batch of SMILES from a CSV file and return predictions.
-
-    The CSV file must have a header row with a column named 'SMILES' or 'smi'.
-    This endpoint starts an asynchronous job. Use the returned job ID to check status.
-
-    Args:
-        file: CSV file with SMILES strings
-
-    Returns:
-        Job ID and initial status information
-
-    Raises:
-        HTTPException: If the file format is invalid
-    """
+    """Handles the upload of a CSV file for batch prediction."""
+    logger.info("Accessed /api/v1/batch/predict_csv endpoint (submit_batch_predict_csv function)")
     if not file.filename:
-        raise HTTPException(status_code=400, detail="Filename cannot be empty.")
+        raise HTTPException(status_code=400, detail={"message": "Filename cannot be empty."})
 
-    logger.info(f"Received batch prediction request for file: {file.filename}")
+    if not file.filename.endswith(".csv"):
+        logger.warning(f"Invalid file type uploaded: {file.filename}")
+        raise HTTPException(status_code=400, detail={"message": "Invalid file type. Only .csv files are accepted."})
 
     try:
         # Call start_batch_job, which returns the job_id string
@@ -184,7 +224,7 @@ async def batch_predict_csv(
                 f"Job {job_id_str} not found in active_jobs immediately after creation."
             )
             raise HTTPException(
-                status_code=500, detail="Batch job creation failed internally."
+                status_code=500, detail={"message": "Batch job creation failed internally."}
             )
 
         job_initial_data = batch_processor.active_jobs[job_id_str]
@@ -192,7 +232,9 @@ async def batch_predict_csv(
         # Construct the response using data from active_jobs
         return BatchPredictionResponse(
             id=UUID(job_id_str),  # Convert string to UUID for the response model
-            status=job_initial_data["status"],
+            status=BatchPredictionStatus(
+                job_initial_data["status"]
+            ),  # Convert str to enum
             filename=job_initial_data["filename"],
             total_molecules=job_initial_data["total_molecules"],
             processed_molecules=job_initial_data.get("processed_molecules", 0),
@@ -201,15 +243,12 @@ async def batch_predict_csv(
             result_url=job_initial_data.get("result_url"),
         )
 
-    except ValueError as exc:
-        logger.warning(f"Invalid batch request: {str(exc)}")
-        raise HTTPException(status_code=400, detail=str(exc))
+    except ValueError as ve:
+        logger.error(f"ValueError during batch job start for {file.filename}: {ve}")
+        raise HTTPException(status_code=400, detail={"message": str(ve)})
     except Exception as e:
-        logger.error(f"Error processing batch request: {type(e).__name__} - {str(e)}")
-        # Consider logging the stack trace for better debugging
-        # import traceback
-        # logger.error(traceback.format_exc())
-        raise HTTPException(status_code=500, detail="Error processing batch request")
+        logger.error(f"Unexpected error starting batch job for {file.filename}: {e}")
+        raise HTTPException(status_code=500, detail={"message": f"Failed to start batch job: {str(e)}"})
 
 
 @app.get("/batch_status/{job_id}", response_model=BatchPredictionStatusResponse)
@@ -232,7 +271,7 @@ async def get_batch_status(job_id: str) -> BatchPredictionStatusResponse:
 
         return BatchPredictionStatusResponse(
             id=UUID(job_id),
-            status=job_status["status"],
+            status=BatchPredictionStatus(job_status["status"]),  # Convert str to enum
             progress=job_status["progress"],
             filename=job_status["filename"],
             created_at=job_status["created_at"],
@@ -267,7 +306,7 @@ async def download_results(job_id: str) -> Union[StreamingResponse, RedirectResp
         job_status = batch_processor.get_job_status(job_id)
 
         # Check if job is completed
-        if job_status["status"] != "completed":
+        if job_status["status"] != BatchPredictionStatus.COMPLETED.value:
             logger.warning(
                 f"Cannot download results for job {job_id}: Job not completed"
             )
@@ -348,3 +387,13 @@ async def generate_report(request: PredictionRequest) -> StreamingResponse:
     except Exception as e:
         logger.error(f"Error generating PDF report: {str(e)}")
         raise HTTPException(status_code=500, detail="Error generating PDF report")
+
+
+if __name__ == "__main__":
+    uvicorn.run(
+        "app.main:app",
+        host=settings.SERVER_HOST,
+        port=settings.SERVER_PORT,
+        reload=settings.SERVER_RELOAD,
+        log_level=settings.LOG_LEVEL.lower(),
+    )

@@ -7,28 +7,53 @@ import asyncio
 import uuid
 import io
 from datetime import datetime
-from typing import Dict, List, Optional, Tuple, Any
+from typing import Dict, List, Optional, Tuple, Any, TypedDict
+from dateutil import tz
 
 from loguru import logger
 from fastapi import UploadFile
 
 from app.models import BatchPredictionStatus
 from app.predict import BBBPredictor
-from app.db import supabase
+
+SMILES_MAX_COUNT = 1000  # Maximum number of SMILES strings to process in a batch
+
+
+# Define TypedDict for job details structure used in active_jobs
+class ResultItemDict(TypedDict, total=False):
+    smiles: str
+    probability: Optional[float]
+    model_version: Optional[str]
+    error: Optional[str]
+
+
+class JobDetailsDict(TypedDict):
+    id: str
+    status: str
+    filename: Optional[str]
+    total_molecules: int
+    processed_molecules: int
+    created_at: str
+    completed_at: Optional[str]
+    smiles_list: List[str]
+    result_url: Optional[str]
+    error_message: Optional[str]
+    results: List[ResultItemDict]
 
 
 class BatchProcessor:
     """Handler for batch prediction processing."""
 
-    def __init__(self, predictor: BBBPredictor):
+    def __init__(self, predictor: BBBPredictor, supabase_client: Any):
         """Initialize the batch processor.
 
         Args:
             predictor: The prediction model to use
+            supabase_client: The Supabase client instance
         """
         self.predictor = predictor
-        self.active_jobs: Dict[str, Dict[str, Any]] = {}
-        self.supabase = supabase  # Added this line
+        self.active_jobs: Dict[str, JobDetailsDict] = {}
+        self.supabase = supabase_client
 
     @staticmethod
     async def validate_csv(file: UploadFile) -> Tuple[bool, Optional[str], List[str]]:
@@ -67,7 +92,10 @@ class BatchProcessor:
             # Extract SMILES from the CSV
             smiles_list = []
             for i, row in enumerate(reader):
-                if i >= 1000:  # Limit to 1000 molecules per batch
+                if i >= SMILES_MAX_COUNT:  # Limit to 1000 molecules per batch
+                    logger.warning(
+                        f"CSV contains more than {SMILES_MAX_COUNT} molecules. Processing only the first {SMILES_MAX_COUNT}."
+                    )
                     break
 
                 if len(row) > smiles_col:
@@ -110,7 +138,7 @@ class BatchProcessor:
 
         # Original filename
         filename = file.filename
-        current_time_iso = datetime.now().isoformat()
+        current_time_iso = datetime.now(tz.tzutc()).isoformat()
         current_status = BatchPredictionStatus.PENDING.value
 
         # Create job in database
@@ -121,8 +149,6 @@ class BatchProcessor:
                 job_id=job_id,
                 filename=filename,
                 total_molecules=len(smiles_list),
-                status=current_status,
-                created_at=current_time_iso,
             )
 
         # Store job info in memory (for demo purposes)
@@ -167,6 +193,7 @@ class BatchProcessor:
 
         smiles_list = job["smiles_list"]
         results = []
+        result: ResultItemDict  # type: ignore # Will be assigned in the loop
 
         try:
             # Process each SMILES
@@ -198,7 +225,7 @@ class BatchProcessor:
                     result = {
                         "smiles": smi,
                         "probability": None,
-                        "model_version": self.predictor.version,
+                        "model_version": self.predictor.version,  # Or None if error is before prediction attempt
                         "error": str(e),
                     }
 
@@ -213,10 +240,17 @@ class BatchProcessor:
                             error_message=str(e),
                         )
 
-                # Add to results
-                results.append(result)
+                except Exception as e:
+                    # Handle other prediction errors
+                    logger.error(f"Error predicting SMILES {smi} in job {job_id}: {e}")
+                    result = {
+                        "smiles": smi,
+                        "probability": None,
+                        "model_version": self.predictor.version,  # Or None if error is before prediction attempt
+                        "error": f"Prediction error: {str(e)}",
+                    }
 
-                # Update progress
+                results.append(result)
                 job["processed_molecules"] = i + 1
 
                 # Update progress in database
@@ -233,37 +267,30 @@ class BatchProcessor:
 
             # Store results in Supabase Storage
             result_url = None
-            if self.supabase.is_configured:
-                # Store CSV in Supabase Storage and get signed URL
-                logger.info(
-                    f"Storing batch results in Supabase Storage for job {job_id}"
-                )
+            if self.supabase and self.supabase.is_configured:
+                csv_content = self._generate_results_csv(job["results"])
+                logger.info(f"Uploading results CSV for job {job_id} to Supabase.")
                 result_url = await self.supabase.store_batch_result_csv(
-                    job_id, csv_content
+                    job_id=job_id, csv_content=csv_content, filename=job["filename"]
                 )
-
-                if not result_url:
-                    logger.warning(
-                        f"Failed to store batch results in Supabase Storage for job {job_id}"
-                    )
-                    # Fallback to in-memory storage for MVP
-                    result_url = f"/download/{job_id}"
-            else:
-                # Fallback to in-memory storage if Supabase is not configured
-                result_url = f"/download/{job_id}"
+                job["result_url"] = result_url
 
             # Save results in memory as fallback
             job["results"] = results
 
-            # Update job status to COMPLETED
-            job["status"] = BatchPredictionStatus.COMPLETED.value
-            job["completed_at"] = datetime.now().isoformat()
-            job["result_url"] = result_url
+            # Update job status to COMPLETED or FAILED (if exception occurred)
+            if job.get("status") != BatchPredictionStatus.FAILED.value: # Check if not already failed
+                job["status"] = BatchPredictionStatus.COMPLETED.value
+            job["completed_at"] = datetime.now(tz.tzutc()).isoformat() # Use timezone.utc
 
             # Update database
-            if self.supabase.is_configured:
+            if self.supabase and self.supabase.is_configured:
+                current_status_enum = BatchPredictionStatus(job["status"]) # Convert string to enum
                 await self.supabase.complete_batch_job(
-                    job_id=job_id, result_url=result_url
+                    job_id=job_id,
+                    status=current_status_enum, # Pass the enum member
+                    result_url=job.get("result_url"),
+                    error_message=job.get("error_message"),
                 )
 
             logger.info(f"Batch job {job_id} completed successfully")
@@ -279,6 +306,9 @@ class BatchProcessor:
             # Update database
             if self.supabase.is_configured:
                 await self.supabase.fail_batch_job(job_id=job_id, error_message=str(e))
+
+        # Remove job from active_jobs once processing is complete or failed definitively
+        del self.active_jobs[job_id]
 
     def get_job_status(self, job_id: str) -> Dict[str, Any]:
         """Get the status of a batch prediction job.
@@ -314,7 +344,7 @@ class BatchProcessor:
         }
 
     @staticmethod
-    def _generate_results_csv(results: List[Dict[str, Any]]) -> str:
+    def _generate_results_csv(results: List[ResultItemDict]) -> str:
         """Generate a CSV string from prediction results.
 
         Args:

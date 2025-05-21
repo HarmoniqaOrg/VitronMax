@@ -32,6 +32,6 @@
 | 2025-05-20 | Secrets / env audit (#Infra-S1 P1) | [PR #XX](...) | ⏳ | Ensure STORAGE_BUCKET_NAME clear in .env.example & document required GitHub secrets. |
 | 2025-05-20 | CI: Configure pytest to fail on skipped tests (#CI-S1 P1) | [PR #XX](...) | ⏳ | Make CI more strict regarding skipped tests. |
 | 2025-05-20 | Docs refresh: Review and update all documentation (#Docs-R1 P1) | [PR #XX](...) | ⏳ | Ensure README, API docs, etc., are up-to-date. |
-| 2025-05-20 | Increase test coverage to ≥ 85% (#Test-C1 P2) | [PR #XX](...) | ⏳ | Focus on db.py, batch.py. Current: ~70%. |
+| 2025-05-20 | Increase test coverage to ≥ 80% (#Test-C1 P2) | [PR #XX](...) | ⏳ | Focus on db.py, batch.py. Current: ~60%. |
 | 2025-05-20 | Implement CLI tool to purge old result CSVs from Supabase Storage (#Tool-T1 P2) | [PR #XX](...) | ⏳ | Cost control and bucket tidiness. |
 | 2025-05-20 | Further tighten Mypy rules (#Mypy-S1 P3) | [PR #XX](...) | ⏳ | e.g., --warn-return-any, --disallow-any-generics. |
