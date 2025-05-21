@@ -70,7 +70,9 @@ def test_batch_predict_csv_valid(client: TestClient) -> None:
 
         # Verify that start_batch_job was called once with the file
         mock_start_job.assert_called_once()
-        assert mock_start_job.call_args[1]["file"].filename == "test.csv"
+        assert "file" in mock_start_job.call_args.kwargs, "Mock was not called with 'file' keyword argument."
+        uploaded_file_arg = mock_start_job.call_args.kwargs["file"]
+        assert uploaded_file_arg.filename == "test.csv"
         mock_process_job.assert_not_called()
 
 
@@ -182,7 +184,7 @@ async def test_download_results_valid(
         "error_message": None,
     }
 
-    with mocker.patch("app.main.batch_processor", new=processor_fixture_instance) as _:  # type: ignore[attr-defined]
+    with mocker.patch("app.main.batch_processor", new=processor_fixture_instance):
         mocker.patch.object(
             processor_fixture_instance,  # This is now app.main.batch_processor
             "get_job_status",
