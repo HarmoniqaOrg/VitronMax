@@ -51,13 +51,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Install flyctl
-        run: |
-          curl -L https://fly.io/install.sh | sh
-          export FLYCTL_INSTALL="/home/runner/.fly"
-          export PATH="$FLYCTL_INSTALL/bin:$PATH"
-          echo "FLYCTL_INSTALL=/home/runner/.fly" >> $GITHUB_ENV
-          echo "$FLYCTL_INSTALL/bin" >> $GITHUB_PATH
+      - uses: superfly/flyctl-actions@v0.0.29
       
       - name: Deploy to Fly.io
         run: flyctl deploy

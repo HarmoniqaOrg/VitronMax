@@ -22,6 +22,11 @@ class Settings(BaseSettings):
     ENV: Environment = Environment.DEVELOPMENT
     LOG_LEVEL: str = "INFO"
 
+    # Server settings for uvicorn
+    SERVER_HOST: str = "0.0.0.0"
+    SERVER_PORT: int = 8000
+    SERVER_RELOAD: bool = True
+
     # OpenAI
     OPENAI_API_KEY: Optional[str] = None
 

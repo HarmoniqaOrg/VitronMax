@@ -61,8 +61,20 @@ class SupabaseClient:
                 timeout=5.0,
             )
             if r.status_code in (200, 201):
-                # PostgREST can return empty body with 201+Prefer=return=minimal
-                return cast(Dict[str, Any], r.json() or {})
+                # If response text is empty (expected with Prefer: return=minimal), return empty dict.
+                if not r.text:
+                    return {}
+                # Otherwise, try to parse JSON.
+                try:
+                    return cast(Dict[str, Any], r.json())
+                except ValueError:
+                    logger.error(
+                        "Supabase POST %s → %s – Failed to decode JSON response: %s",
+                        route,
+                        r.status_code,
+                        r.text[:200],
+                    )
+                    return None
             logger.error("Supabase POST %s → %s – %s", route, r.status_code, r.text)
             return None
 

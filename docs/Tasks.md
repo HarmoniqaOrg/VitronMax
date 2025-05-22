@@ -27,10 +27,11 @@
 | 2025-05-20 | Migrate Pydantic BaseSettings to ConfigDict (#TechDebt-T3)          | [PR #11](https://github.com/HarmoniqaOrg/VitronMax/pull/11) | ✅ Done (commit: eb7039e) | Migrated to ConfigDict, fixed Pydantic deprecation warn |
 | 2025-05-20 | Convert fingerprint to NumPy array & add unit test (#PRD-§3.1, #TechDebt-T4) | [PR #12](https://github.com/HarmoniqaOrg/VitronMax/pull/12) | ✅ Done (commit: [hash_here]) | Fingerprint extraction now uses `np.ndarray[np.int8]`. |
 | 2025-05-20 | Resolve Mypy errors & Harden CI (Global Rules #1, #5) | [PR #13](https://github.com/HarmoniqaOrg/VitronMax/pull/13) | ✅ Done (commit: dc1389f) | All Mypy errors fixed. CI: DeprecationWarnings as errors, action version pinned, code auto-formatted. |
-| 2025-05-21 | Un-skip remaining batch tests (test_batch_predict_csv_valid, test_batch_status_valid) (#TechDebt-T1 P0) | [PR #XX](...) | ✅ Done | Fixed underlying endpoint logic and test mocks. |
+| 2025-05-21 | Un-skip remaining batch tests (test_batch_predict_csv_valid, test_batch_status_valid) (#TechDebt-T1 P0) | [PR #17](https://github.com/HarmoniqaOrg/VitronMax/pull/17) | ✅ Done | Fixed underlying endpoint logic and test mocks. |
+| 2025-05-21 | Fix batch CSV test failures and Supabase mocking issues (#PRD-§3.2) | [PR #XX](...) | ✅ Done (commit: [hash_here]) | Resolved all test failures in test_batch.py. |
 | 2025-05-20 | Secrets / env audit (#Infra-S1 P1) | [PR #XX](...) | ⏳ | Ensure STORAGE_BUCKET_NAME clear in .env.example & document required GitHub secrets. |
 | 2025-05-20 | CI: Configure pytest to fail on skipped tests (#CI-S1 P1) | [PR #XX](...) | ⏳ | Make CI more strict regarding skipped tests. |
 | 2025-05-20 | Docs refresh: Review and update all documentation (#Docs-R1 P1) | [PR #XX](...) | ⏳ | Ensure README, API docs, etc., are up-to-date. |
-| 2025-05-20 | Increase test coverage to ≥ 75% (#Test-C1 P2) | [PR #XX](...) | ⏳ | Focus on db.py, batch.py. Current: ~62%. |
+| 2025-05-20 | Increase test coverage to ≥ 80% (#Test-C1 P2) | [PR #XX](...) | ⏳ | Focus on db.py, batch.py. Current: ~60%. |
 | 2025-05-20 | Implement CLI tool to purge old result CSVs from Supabase Storage (#Tool-T1 P2) | [PR #XX](...) | ⏳ | Cost control and bucket tidiness. |
 | 2025-05-20 | Further tighten Mypy rules (#Mypy-S1 P3) | [PR #XX](...) | ⏳ | e.g., --warn-return-any, --disallow-any-generics. |
