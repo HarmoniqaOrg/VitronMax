@@ -207,11 +207,6 @@ async def test_start_batch_job_valid_csv(
         new_callable=AsyncMock,
         return_value=(True, None, parsed_smiles_list),
     )
-    mock_process_batch_job = mocker.patch.object(
-        processor, "process_batch_job", new_callable=AsyncMock
-    )
-    # Mock asyncio.create_task to prevent actual task execution
-    mock_create_task = mocker.patch("asyncio.create_task")
 
     job_id = await processor.start_batch_job(mock_upload_file_valid)
 
@@ -231,12 +226,6 @@ async def test_start_batch_job_valid_csv(
         filename=mock_upload_file_valid.filename,
         total_molecules=len(parsed_smiles_list),
     )
-
-    # Ensure process_batch_job is scheduled via asyncio.create_task
-    mock_create_task.assert_called_once()  # Check that create_task was called
-    # Check that the mocked process_batch_job was called with the correct job_id,
-    # implying the correct coroutine was passed to create_task.
-    mock_process_batch_job.assert_called_once_with(job_id)
 
 
 # Test with a mix of successful and error results

@@ -16,7 +16,7 @@ from fastapi import UploadFile
 from app.models import BatchPredictionStatus
 from app.predict import BBBPredictor
 
-SMILES_MAX_COUNT = 1000  # Maximum number of SMILES strings to process in a batch
+SMILES_MAX_COUNT = 10000  # Maximum number of SMILES strings to process in a batch
 
 
 # Define TypedDict for job details structure used in active_jobs
@@ -166,8 +166,8 @@ class BatchProcessor:
             "results": [],
         }
 
-        # Start the prediction job in the background
-        asyncio.create_task(self.process_batch_job(job_id))
+        # Start the prediction job in the background - This will be handled by FastAPI's BackgroundTasks in the route
+        # asyncio.create_task(self.process_batch_job(job_id)) # Removed this line
 
         return job_id
 
@@ -188,11 +188,11 @@ class BatchProcessor:
         # Update status in database if available
         if self.supabase.is_configured:
             await self.supabase.update_batch_job_status(
-                job_id, BatchPredictionStatus.PROCESSING.value
+                job_id, BatchPredictionStatus.PROCESSING  # Use enum member
             )
 
         smiles_list = job["smiles_list"]
-        results = []
+        job_results_list: List[ResultItemDict] = []  # Use a local list to build results
         result: ResultItemDict
 
         try:
@@ -215,18 +215,18 @@ class BatchProcessor:
                         await self.supabase.store_batch_prediction_item(
                             batch_id=job_id,
                             smiles=smi,
-                            probability=float(prob),
-                            model_version=self.predictor.version,
-                            row_number=i,
+                            prediction_result=result.get("probability"),
+                            model_version=result.get("model_version"),
+                            error_message=result.get("error"),
                         )
 
-                except ValueError as e:
-                    # Handle invalid SMILES
+                except ValueError as ve:
+                    logger.warning(f"Validation error for SMILES '{smi}': {ve}")
                     result = {
                         "smiles": smi,
                         "probability": None,
-                        "model_version": self.predictor.version,  # Or None if error is before prediction attempt
-                        "error": str(e),
+                        "model_version": self.predictor.version,  # or None if error is before prediction
+                        "error": str(ve),
                     }
 
                     # Store error in database
@@ -234,23 +234,21 @@ class BatchProcessor:
                         await self.supabase.store_batch_prediction_item(
                             batch_id=job_id,
                             smiles=smi,
-                            probability=None,
+                            prediction_result=None,
                             model_version=self.predictor.version,
-                            row_number=i,
-                            error_message=str(e),
+                            error_message=str(ve),
                         )
 
                 except Exception as e:
-                    # Handle other prediction errors
-                    logger.error(f"Error predicting SMILES {smi} in job {job_id}: {e}")
+                    logger.error(f"Error predicting SMILES '{smi}': {e}")
                     result = {
                         "smiles": smi,
                         "probability": None,
-                        "model_version": self.predictor.version,  # Or None if error is before prediction attempt
+                        "model_version": self.predictor.version,  # or None if error is before prediction
                         "error": f"Prediction error: {str(e)}",
                     }
 
-                results.append(result)
+                job_results_list.append(result)
                 job["processed_molecules"] = i + 1
 
                 # Update progress in database
@@ -262,59 +260,44 @@ class BatchProcessor:
                 # Small delay to prevent overloading (and simulate processing time)
                 await asyncio.sleep(0.01)
 
-            # Generate results CSV
-            csv_content = self._generate_results_csv(results)
+            # All SMILES processed, mark as COMPLETED (locally first)
+            job["status"] = BatchPredictionStatus.COMPLETED.value
+            job["completed_at"] = datetime.now(tz.tzutc()).isoformat()
+            job["results"] = job_results_list  # Assign the fully populated list
 
-            # Store results in Supabase Storage
-            result_url = None
-            if self.supabase and self.supabase.is_configured:
-                csv_content = self._generate_results_csv(job["results"])
-                logger.info(f"Uploading results CSV for job {job_id} to Supabase.")
+            # Generate CSV and upload to Supabase if configured
+            if self.supabase.is_configured:
+                csv_content = self._generate_results_csv(job_results_list)
                 result_url = await self.supabase.store_batch_result_csv(
-                    job_id=job_id, csv_content=csv_content, filename=job["filename"]
+                    csv_content=csv_content, job_id=job_id, filename=job["filename"]
                 )
                 job["result_url"] = result_url
-
-            # Save results in memory as fallback
-            job["results"] = results
-
-            # Update job status to COMPLETED or FAILED (if exception occurred)
-            if (
-                job.get("status") != BatchPredictionStatus.FAILED.value
-            ):  # Check if not already failed
-                job["status"] = BatchPredictionStatus.COMPLETED.value
-            job["completed_at"] = datetime.now(
-                tz.tzutc()
-            ).isoformat()  # Use timezone.utc
-
-            # Update database
-            if self.supabase and self.supabase.is_configured:
-                current_status_enum = BatchPredictionStatus(
-                    job["status"]
-                )  # Convert string to enum
                 await self.supabase.complete_batch_job(
                     job_id=job_id,
-                    status=current_status_enum,  # Pass the enum member
-                    result_url=job.get("result_url"),
-                    error_message=job.get("error_message"),
+                    status=BatchPredictionStatus.COMPLETED,  # Use enum member
+                    result_url=result_url,
+                    error_message=None,
                 )
 
-            logger.info(f"Batch job {job_id} completed successfully")
-
         except Exception as e:
-            # Handle any unexpected errors
-            logger.error(f"Error processing batch job {job_id}: {str(e)}")
-
-            # Update job status to FAILED
+            logger.error(f"Error processing batch job {job_id}: {e}")
             job["status"] = BatchPredictionStatus.FAILED.value
             job["error_message"] = str(e)
+            job["completed_at"] = datetime.now(tz.tzutc()).isoformat()
+            # Ensure results processed so far are still in job["results"]
+            # If the error happened during store_batch_result_csv, job_results_list is complete.
+            # If it happened during individual SMILES processing, job_results_list contains results up to the error.
+            job["results"] = job_results_list  # Assign whatever was processed
 
-            # Update database
             if self.supabase.is_configured:
-                await self.supabase.fail_batch_job(job_id=job_id, error_message=str(e))
+                await self.supabase.complete_batch_job(
+                    job_id=job_id,
+                    status=BatchPredictionStatus.FAILED,  # Use enum member
+                    result_url=None,
+                    error_message=str(e),
+                )
 
-        # Remove job from active_jobs once processing is complete or failed definitively
-        del self.active_jobs[job_id]
+        logger.info(f"Finished processing batch job {job_id}")
 
     def get_job_status(self, job_id: str) -> Dict[str, Any]:
         """Get the status of a batch prediction job.

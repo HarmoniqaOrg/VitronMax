@@ -2164,3 +2164,51 @@ id
 2025-05-22 01:36:30.603 | INFO     | app.main:lifespan:53 - Initializing application resources (lifespan startup)
 2025-05-22 01:36:30.603 | INFO     | app.main:lifespan:58 - Checking Supabase Storage bucket (lifespan)
 2025-05-22 01:36:30.919 | INFO     | app.main:lifespan:61 - Supabase Storage bucket confirmed (lifespan)
+2025-05-22 01:37:58.237 | INFO     | app.main:lifespan:73 - Application shutdown (lifespan)
+2025-05-22 01:37:59.588 | INFO     | __mp_main__:<module>:47 - Starting VitronMax in development environment
+2025-05-22 01:38:00.461 | INFO     | app.main:<module>:47 - Starting VitronMax in development environment
+2025-05-22 01:38:00.660 | INFO     | app.main:lifespan:53 - Initializing application resources (lifespan startup)
+2025-05-22 01:38:00.660 | INFO     | app.main:lifespan:58 - Checking Supabase Storage bucket (lifespan)
+2025-05-22 01:38:00.838 | INFO     | app.main:lifespan:61 - Supabase Storage bucket confirmed (lifespan)
+2025-05-22 01:39:28.265 | INFO     | app.main:lifespan:73 - Application shutdown (lifespan)
+2025-05-22 01:39:30.327 | INFO     | __mp_main__:<module>:47 - Starting VitronMax in development environment
+2025-05-22 01:39:31.205 | INFO     | app.main:<module>:47 - Starting VitronMax in development environment
+2025-05-22 01:39:31.427 | INFO     | app.main:lifespan:53 - Initializing application resources (lifespan startup)
+2025-05-22 01:39:31.427 | INFO     | app.main:lifespan:58 - Checking Supabase Storage bucket (lifespan)
+2025-05-22 01:39:31.727 | INFO     | app.main:lifespan:61 - Supabase Storage bucket confirmed (lifespan)
+2025-05-22 01:47:13.507 | INFO     | app.main:lifespan:73 - Application shutdown (lifespan)
+2025-05-22 01:47:14.876 | INFO     | __mp_main__:<module>:47 - Starting VitronMax in development environment
+2025-05-22 01:47:15.723 | INFO     | app.main:<module>:47 - Starting VitronMax in development environment
+2025-05-22 01:47:15.927 | INFO     | app.main:lifespan:53 - Initializing application resources (lifespan startup)
+2025-05-22 01:47:15.927 | INFO     | app.main:lifespan:58 - Checking Supabase Storage bucket (lifespan)
+2025-05-22 01:47:16.414 | INFO     | app.main:lifespan:61 - Supabase Storage bucket confirmed (lifespan)
+2025-05-22 01:51:58.575 | INFO     | app.main:lifespan:73 - Application shutdown (lifespan)
+2025-05-22 01:52:00.000 | INFO     | __mp_main__:<module>:47 - Starting VitronMax in development environment
+2025-05-22 01:52:00.885 | INFO     | app.main:<module>:47 - Starting VitronMax in development environment
+2025-05-22 01:52:01.090 | INFO     | app.main:lifespan:53 - Initializing application resources (lifespan startup)
+2025-05-22 01:52:01.090 | INFO     | app.main:lifespan:58 - Checking Supabase Storage bucket (lifespan)
+2025-05-22 01:52:01.379 | INFO     | app.main:lifespan:61 - Supabase Storage bucket confirmed (lifespan)
+2025-05-22 01:56:28.802 | INFO     | app.main:lifespan:73 - Application shutdown (lifespan)
+2025-05-22 01:56:30.122 | INFO     | __mp_main__:<module>:47 - Starting VitronMax in development environment
+2025-05-22 01:56:30.949 | INFO     | app.main:<module>:47 - Starting VitronMax in development environment
+2025-05-22 01:56:31.148 | INFO     | app.main:lifespan:53 - Initializing application resources (lifespan startup)
+2025-05-22 01:56:31.148 | INFO     | app.main:lifespan:58 - Checking Supabase Storage bucket (lifespan)
+2025-05-22 01:56:31.447 | INFO     | app.main:lifespan:61 - Supabase Storage bucket confirmed (lifespan)
+2025-05-22 01:57:13.737 | INFO     | app.main:lifespan:73 - Application shutdown (lifespan)
+2025-05-22 01:57:15.023 | INFO     | __mp_main__:<module>:47 - Starting VitronMax in development environment
+2025-05-22 01:57:15.824 | INFO     | app.main:<module>:47 - Starting VitronMax in development environment
+2025-05-22 01:57:16.024 | INFO     | app.main:lifespan:53 - Initializing application resources (lifespan startup)
+2025-05-22 01:57:16.024 | INFO     | app.main:lifespan:58 - Checking Supabase Storage bucket (lifespan)
+2025-05-22 01:57:16.190 | INFO     | app.main:lifespan:61 - Supabase Storage bucket confirmed (lifespan)
+2025-05-22 01:57:28.803 | INFO     | app.main:lifespan:73 - Application shutdown (lifespan)
+2025-05-22 01:57:30.069 | INFO     | __mp_main__:<module>:47 - Starting VitronMax in development environment
+2025-05-22 01:57:30.872 | INFO     | app.main:<module>:47 - Starting VitronMax in development environment
+2025-05-22 01:57:31.070 | INFO     | app.main:lifespan:53 - Initializing application resources (lifespan startup)
+2025-05-22 01:57:31.070 | INFO     | app.main:lifespan:58 - Checking Supabase Storage bucket (lifespan)
+2025-05-22 01:57:31.226 | INFO     | app.main:lifespan:61 - Supabase Storage bucket confirmed (lifespan)
+2025-05-22 01:58:13.754 | INFO     | app.main:lifespan:73 - Application shutdown (lifespan)
+2025-05-22 01:58:15.054 | INFO     | __mp_main__:<module>:47 - Starting VitronMax in development environment
+2025-05-22 01:58:15.908 | INFO     | app.main:<module>:47 - Starting VitronMax in development environment
+2025-05-22 01:58:16.105 | INFO     | app.main:lifespan:53 - Initializing application resources (lifespan startup)
+2025-05-22 01:58:16.105 | INFO     | app.main:lifespan:58 - Checking Supabase Storage bucket (lifespan)
+2025-05-22 01:58:16.415 | INFO     | app.main:lifespan:61 - Supabase Storage bucket confirmed (lifespan)
