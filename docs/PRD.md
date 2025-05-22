@@ -4,7 +4,7 @@
 Speed + explainability missing in BBB in-silico screening at scale.
 
 ## 2. Solution
-API-first SaaS returning calibrated BBB probability, SwissADME panel, PDF report, and chat explanation.
+API-first SaaS for calibrated BBB probability and PDF reports, with planned V0.1 features including a SwissADME panel and chat explanations.
 
 ## 3. MVP Scope
 3.1 `/predict_fp` – Random-Forest BBB prob  

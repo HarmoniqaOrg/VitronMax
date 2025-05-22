@@ -11,7 +11,7 @@ VitronMax is a FastAPI-based service that predicts blood-brain barrier permeabil
 - PDF report generation with molecule visualization and interpretation
 - Data persistence through Supabase (PostgreSQL + Storage)
 - Containerized deployment with Docker
-- CI/CD through GitHub Actions with quality gates (mypy, ruff, black)
+- CI/CD through GitHub Actions with quality gates (ruff, black, mypy --strict)
 - Health check endpoint for monitoring and deployment validation
 
 ## Getting Started
@@ -135,6 +135,12 @@ To verify the Supabase Storage functionality:
 
 4. The download endpoint will automatically redirect to the Supabase Storage signed URL if available
 
+Alternatively, you can use the `scripts/supabase_sanity_probe.py` script to directly check Supabase connectivity and bucket status:
+```bash
+# Ensure .env is configured with SUPABASE_URL and SUPABASE_SERVICE_KEY
+python scripts/supabase_sanity_probe.py
+```
+
 ### Database Tables
 
 VitronMax requires the following Supabase tables. The schema is defined in `db/schema.sql`:
@@ -180,9 +186,11 @@ VitronMax requires the following Supabase tables. The schema is defined in `db/s
 
 ## Testing
 
-Run the test suite with:
-
+Run the full local quality suite (linting, type checking, tests):
 ```bash
+ruff check .
+black --check .
+mypy app/ --strict
 pytest
 ```
 
