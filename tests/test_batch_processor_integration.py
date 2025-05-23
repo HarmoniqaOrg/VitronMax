@@ -39,6 +39,7 @@ async def test_process_batch_job_success(
         "filename": "test_smiles.csv",
         "total_molecules": len(smiles_list),
         "processed_molecules": 0,
+        "progress": 0.0,
         "created_at": datetime.now(timezone.utc).isoformat(),
         "completed_at": None,
         "smiles_list": smiles_list,
@@ -129,6 +130,7 @@ async def test_process_batch_job_partial_success_invalid_smiles(
         "filename": "partial_smiles.csv",
         "total_molecules": len(smiles_list),
         "processed_molecules": 0,
+        "progress": 0.0,
         "created_at": datetime.now(timezone.utc).isoformat(),
         "completed_at": None,
         "smiles_list": smiles_list,
@@ -243,6 +245,7 @@ async def test_process_batch_job_predictor_error(
         "filename": "error_job.csv",
         "total_molecules": len(smiles_list),
         "processed_molecules": 0,
+        "progress": 0.0,
         "created_at": datetime.now(timezone.utc).isoformat(),
         "completed_at": None,
         "smiles_list": smiles_list,
@@ -325,6 +328,7 @@ async def test_process_batch_job_supabase_upload_failure(
         "filename": "upload_fail.csv",
         "total_molecules": len(smiles_list),
         "processed_molecules": 0,
+        "progress": 0.0,
         "created_at": datetime.now(timezone.utc).isoformat(),
         "completed_at": None,
         "smiles_list": smiles_list,
@@ -420,6 +424,7 @@ async def test_process_batch_job_no_smiles(
         "filename": "empty_smiles.csv",
         "total_molecules": 0,
         "processed_molecules": 0,
+        "progress": 0.0,
         "created_at": datetime.now(timezone.utc).isoformat(),
         "completed_at": None,
         "smiles_list": smiles_list,
@@ -650,7 +655,6 @@ async def test_start_batch_job_success_without_supabase_integration(
     mock_table_query_builder_no_cfg.insert.assert_not_called()
 
 
-@pytest.mark.skip(reason="Temporarily skipped to focus on mypy errors")
 @pytest.mark.asyncio
 async def test_get_job_status_not_found(
     processor_with_mock_predictor: BatchProcessor,
@@ -660,7 +664,6 @@ async def test_get_job_status_not_found(
         processor_with_mock_predictor.get_job_status("non-existent-job")
 
 
-@pytest.mark.skip(reason="Temporarily skipped to focus on mypy errors")
 @pytest.mark.asyncio
 async def test_get_job_status_found(
     processor_with_mock_predictor: BatchProcessor,
@@ -673,6 +676,7 @@ async def test_get_job_status_found(
         "filename": "test.csv",
         "total_molecules": 1,
         "processed_molecules": 0,
+        "progress": 0.0,
         "created_at": datetime.now(timezone.utc).isoformat(),
         "completed_at": None,
         "smiles_list": ["CCO"],
