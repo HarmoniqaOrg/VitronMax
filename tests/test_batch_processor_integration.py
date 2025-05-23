@@ -655,7 +655,6 @@ async def test_start_batch_job_success_without_supabase_integration(
     mock_table_query_builder_no_cfg.insert.assert_not_called()
 
 
-@pytest.mark.skip(reason="Temporarily skipped to focus on mypy errors")
 @pytest.mark.asyncio
 async def test_get_job_status_not_found(
     processor_with_mock_predictor: BatchProcessor,
@@ -665,7 +664,6 @@ async def test_get_job_status_not_found(
         processor_with_mock_predictor.get_job_status("non-existent-job")
 
 
-@pytest.mark.skip(reason="Temporarily skipped to focus on mypy errors")
 @pytest.mark.asyncio
 async def test_get_job_status_found(
     processor_with_mock_predictor: BatchProcessor,
