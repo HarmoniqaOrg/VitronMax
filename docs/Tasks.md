@@ -33,6 +33,7 @@
 | 2025-05-22 | Stabilize Fly.io deployment in CI (Global Rules #5) | [PR #19](https://github.com/HarmoniqaOrg/VitronMax/pull/19) | ✅ Done (commit: 101b48c) | Updated GitHub Action to `superfly/flyctl-actions/setup-flyctl@master`. |
 | 2025-05-23 | Resolve all Mypy errors related to JobDetailsDict and BatchPredictionResponse typing (Global Rules #1) | [PR #20](https://github.com/HarmoniqaOrg/VitronMax/pull/20) | ✅ Done (commit: #88) | Ensured `progress` field in `JobDetailsDict` and correct type transformations. |
 | 2025-05-23 | Unskip and pass batch processor status tests (#Test-C1 P2) | [PR #21](https://github.com/HarmoniqaOrg/VitronMax/pull/21) | ✅ Done (commit: #90) | Unskipped `test_get_job_status_not_found` and `test_get_job_status_found`. |
+| 2025-05-23 | Unskip batch integration tests & fix Mypy (#Test-C1 P2) | [PR #XX](...) | ✅ Done (commit: 509f366) | Unskipped specific tests, resolved Mypy issues. |
 | 2025-05-20 | Secrets / env audit (#Infra-S1 P1) | [PR #XX](...) | ⏳ | Ensure STORAGE_BUCKET_NAME clear in .env.example & document required GitHub secrets. |
 | 2025-05-20 | CI: Configure pytest to fail on skipped tests (#CI-S1 P1) | [PR #XX](...) | ⏳ | Make CI more strict regarding skipped tests. |
 | 2025-05-20 | Docs refresh: Review and update all documentation (#Docs-R1 P1) | [PR #XX](...) | ⏳ | Ensure README, API docs, etc., are up-to-date. |

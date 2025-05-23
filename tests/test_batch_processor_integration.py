@@ -7,6 +7,7 @@ import uuid
 from datetime import datetime, timezone
 from typing import TypedDict, Dict, List, Any, NoReturn
 from unittest.mock import AsyncMock, MagicMock
+import asyncio
 
 from fastapi import UploadFile
 from pytest_mock import MockerFixture
@@ -544,7 +545,7 @@ async def test_start_batch_job_valid_csv_supabase_configured(
     # Mock process_batch_job for this test to isolate start_batch_job logic
     mocker.patch.object(processor, "process_batch_job", new_callable=AsyncMock)
 
-    job_id = await processor.start_batch_job(mock_upload_file_valid)
+    job_id = await processor.start_batch_job(file=mock_upload_file_valid)
 
     assert job_id is not None
     assert job_id in processor.active_jobs
@@ -563,7 +564,6 @@ async def test_start_batch_job_valid_csv_supabase_configured(
     # Removed assertion here
 
 
-@pytest.mark.skip(reason="Temporarily skipped to focus on mypy errors")
 @pytest.mark.integration
 @pytest.mark.asyncio
 async def test_start_batch_job_success_with_supabase_integration(
@@ -579,41 +579,68 @@ async def test_start_batch_job_success_with_supabase_integration(
         file=BytesIO(test_smiles_content.encode("utf-8")),
     )
 
-    processor.supabase.client = mock_supabase_client_configured
-    processor.supabase.is_configured = True
-    assigned_client_mock = processor.supabase.client
+    # Get the client that the BatchProcessor is using directly
+    actual_client_in_use = processor.supabase
+    # Ensure it thinks it's configured (though the fixture should handle this)
+    actual_client_in_use.is_configured = True
 
-    # Explicitly mock the 'table' attribute and its chained calls
-    mock_table_query_builder = MagicMock()
-    mock_insert_builder = MagicMock()
-    assigned_client_mock.table = MagicMock(return_value=mock_table_query_builder)
-    mock_table_query_builder.insert = MagicMock(return_value=mock_insert_builder)
-    # If execute() was called and its result mattered:
-    # mock_insert_builder.execute = AsyncMock(return_value=MagicMock(data=[{"id": "some_id"}]))
+    # Mock _post_json first, as create_batch_job's side_effect will call it
+    actual_client_in_use._post_json = AsyncMock(return_value=None)  # Or a mock response
+
+    # Configure the existing mock of create_batch_job (from the fixture)
+    # to have a side_effect that calls _post_json.
+    async def mock_create_batch_job_side_effect(
+        job_id: str, filename: str | None, total_molecules: int, **kwargs: Any
+    ) -> None:
+        # This side_effect simulates the real create_batch_job's call to _post_json.
+        # The real SupabaseClient.create_batch_job takes these specific args.
+        await actual_client_in_use._post_json(
+            "/rest/v1/batch_predictions",
+            {
+                "id": job_id,
+                "status": BatchPredictionStatus.PENDING.value,
+                "filename": filename,
+                "total_molecules": total_molecules,
+            },
+        )
+
+    actual_client_in_use.create_batch_job.side_effect = (
+        mock_create_batch_job_side_effect
+    )
+    # Ensure the mock is awaitable if not already (fixture should make it AsyncMock)
+    if not asyncio.iscoroutinefunction(actual_client_in_use.create_batch_job):
+        # This path should ideally not be taken if fixture setup is correct
+        actual_client_in_use.create_batch_job = AsyncMock(
+            side_effect=mock_create_batch_job_side_effect
+        )
 
     mocker.patch.object(processor, "process_batch_job", new_callable=AsyncMock)
 
-    job_id = await processor.start_batch_job(file=mock_upload_file)
+    job_id_str = await processor.start_batch_job(file=mock_upload_file)
 
-    assert isinstance(job_id, str)
-    assert len(job_id) > 0
+    assert isinstance(job_id_str, str)
+    assert len(job_id_str) > 0
 
-    assigned_client_mock.table.assert_called_once_with("batch_predictions")
-    mock_table_query_builder.insert.assert_called_once()
-    insert_args, _ = mock_table_query_builder.insert.call_args
-    assert insert_args[0]["id"] == job_id
-    assert insert_args[0]["filename"] == "test_smiles_supabase.csv"
-    assert insert_args[0]["status"] == BatchPredictionStatus.PENDING.value
-    assert insert_args[0]["total_molecules"] == 2
-    assert "smiles_list" in insert_args[0]
-    assert insert_args[0]["smiles_list"] == ["CCO", "CCC"]
+    # Assert that _post_json was called correctly
+    actual_client_in_use._post_json.assert_called_once_with(
+        "/rest/v1/batch_predictions",
+        {
+            "id": job_id_str,  # Use the actual job_id returned
+            "status": BatchPredictionStatus.PENDING.value,
+            "filename": "test_smiles_supabase.csv",
+            "total_molecules": 2,  # From test_smiles_content
+        },
+    )
 
-    # Check that process_batch_job was scheduled (indirectly, by not erroring)
-    # The actual scheduling is done by FastAPI's BackgroundTasks in the endpoint,
-    # so here we just ensure start_batch_job completes its part.
+    # Check job details in active_jobs (optional, but good for sanity)
+    assert job_id_str in processor.active_jobs
+    job_details = processor.active_jobs[job_id_str]
+    assert job_details["filename"] == "test_smiles_supabase.csv"
+    assert job_details["status"] == BatchPredictionStatus.PENDING.value
+    assert job_details["total_molecules"] == 2
+    assert job_details["smiles_list"] == ["CCO", "CCC"]
 
 
-@pytest.mark.skip(reason="Temporarily skipped to focus on mypy errors")
 @pytest.mark.integration
 @pytest.mark.asyncio
 async def test_start_batch_job_success_without_supabase_integration(
