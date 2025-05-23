@@ -7,8 +7,9 @@ import asyncio
 import uuid
 import io
 from datetime import datetime
-from typing import Dict, List, Optional, Tuple, Any, TypedDict
+from typing import Dict, List, Optional, Any, Tuple
 from dateutil import tz
+from typing_extensions import TypedDict
 
 from loguru import logger
 from fastapi import UploadFile
@@ -33,6 +34,7 @@ class JobDetailsDict(TypedDict):
     filename: Optional[str]
     total_molecules: int
     processed_molecules: int
+    progress: float
     created_at: str
     completed_at: Optional[str]
     smiles_list: List[str]
@@ -158,6 +160,7 @@ class BatchProcessor:
             "filename": filename,
             "total_molecules": len(smiles_list),
             "processed_molecules": 0,
+            "progress": 0.0,
             "created_at": current_time_iso,
             "completed_at": None,
             "smiles_list": smiles_list,
@@ -299,7 +302,7 @@ class BatchProcessor:
 
         logger.info(f"Finished processing batch job {job_id}")
 
-    def get_job_status(self, job_id: str) -> Dict[str, Any]:
+    def get_job_status(self, job_id: str) -> JobDetailsDict:
         """Get the status of a batch prediction job.
 
         Args:
@@ -312,25 +315,34 @@ class BatchProcessor:
             ValueError: If the job is not found
         """
         if job_id not in self.active_jobs:
-            raise ValueError(f"Job {job_id} not found")
+            # This path is for jobs not found in the in-memory dict.
+            # For jobs found via db_client.get_batch_job, different logic applies.
+            # The current mypy error is for this in-memory path.
+            raise ValueError(f"Job {job_id} not found in active jobs")
 
         job = self.active_jobs[job_id]
 
         # Calculate progress percentage
         total = job["total_molecules"]
         processed = job["processed_molecules"]
-        progress = (processed / total * 100) if total > 0 else 0
+        progress_val = (processed / total * 100.0) if total > 0 else 0.0
 
-        return {
+        # Ensure all keys from JobDetailsDict are present
+        details_to_return: JobDetailsDict = {
             "id": job["id"],
             "status": job["status"],
-            "progress": progress,
-            "filename": job["filename"],
+            "filename": job.get("filename"),  # filename is Optional in JobDetailsDict
+            "total_molecules": job["total_molecules"],
+            "processed_molecules": job["processed_molecules"],
+            "progress": progress_val,
             "created_at": job["created_at"],
-            "completed_at": job["completed_at"],
-            "result_url": job["result_url"],
-            "error_message": job.get("error_message"),
+            "completed_at": job.get("completed_at"),  # completed_at is Optional
+            "smiles_list": job["smiles_list"],
+            "result_url": job.get("result_url"),  # result_url is Optional
+            "error_message": job.get("error_message"),  # error_message is Optional
+            "results": job["results"],
         }
+        return details_to_return
 
     @staticmethod
     def _generate_results_csv(results: List[ResultItemDict]) -> str:

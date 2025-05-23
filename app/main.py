@@ -28,12 +28,12 @@ from app.models import (
     PredictionRequest,
     PredictionResponse,
     BatchPredictionResponse,
-    BatchPredictionStatusResponse,
     BatchPredictionStatus,  # Import BatchPredictionStatus enum
 )
 from app.predict import BBBPredictor
-from app.batch import BatchProcessor
+from app.batch import BatchProcessor, JobDetailsDict  # ADDED JobDetailsDict here
 from app.report import generate_pdf_report
+from uuid import UUID
 
 # Configure logging based on environment
 log_level = getattr(logging, settings.LOG_LEVEL)
@@ -106,6 +106,9 @@ predictor = BBBPredictor()
 # Initialize the batch processor
 batch_processor = BatchProcessor(predictor=predictor, supabase_client=supabase)
 
+# Fixed ID for debugging this specific scenario
+DEBUG_FIXED_JOB_ID = "123e4567-e89b-12d3-a456-426614174000"  # Valid UUID
+
 
 @app.get("/", response_class=RedirectResponse, include_in_schema=False)
 async def root(request: Request) -> RedirectResponse:
@@ -115,51 +118,32 @@ async def root(request: Request) -> RedirectResponse:
 
 @app.get(
     "/api/v1/batch/job_status/{job_id}",
-    response_model=BatchPredictionStatusResponse,
+    response_model=JobDetailsDict,  # CORRECTED response_model
     tags=["batch"],
 )
-async def get_batch_job_status(job_id: str) -> BatchPredictionStatusResponse:
-    """Get the status of a batch prediction job."""
-    logger.info(f"Received status request for job ID: {job_id}")
+def get_batch_job_status(job_id: str) -> JobDetailsDict:  # REMOVED async
+    """Get the status and details of a batch prediction job."""
+    logger.info(f"Fetching status for job_id: {job_id}")
     try:
-        # Convert string job_id to UUID if your BatchProcessor expects UUID
-        # If BatchProcessor.get_job_status expects a string, no conversion needed.
-        # Assuming BatchProcessor.get_job_status handles string job_id directly
-        # and returns a dict compatible with BatchPredictionStatusResponse.
-        status_data = batch_processor.get_job_status(job_id)
-
-        # Ensure the status_data dict matches the BatchPredictionStatusResponse model fields
-        # The BatchProcessor.get_job_status should return a dictionary like:
-        # {
-        #     "job_id": "some-uuid-string",
-        #     "status": "COMPLETED", # or other BatchPredictionStatus enum value
-        #     "total_molecules": 100,
-        #     "processed_molecules": 100,
-        #     "created_at": "iso-datetime-string",
-        #     "completed_at": "iso-datetime-string" or None,
-        #     "result_url": "url-string" or None,
-        #     "error_message": "error-string" or None
-        # }
-        # The Pydantic model will handle validation and conversion (e.g., string to enum for status)
-        return BatchPredictionStatusResponse(**status_data)
-    except KeyError:
-        logger.warning(f"Job ID {job_id} not found for status check (KeyError).")
+        # BatchProcessor.get_job_status is synchronous
+        job_details = batch_processor.get_job_status(job_id)
+        if (
+            not job_details
+        ):  # Should not happen if get_job_status raises ValueError for not found
+            raise ValueError(f"Job ID '{job_id}' not found.")  # Defensive
+        return job_details
+    except ValueError as e:
+        logger.warning(f"ValueError when fetching status for job_id {job_id}: {e}")
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=f"Job ID {job_id} not found"
-        )
-    except ValueError as ve:
-        logger.warning(
-            f"Job ID {job_id} not found or invalid for status check (ValueError): {ve}"
-        )
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Job ID {job_id} not found or invalid",
-        )
+            status_code=status.HTTP_404_NOT_FOUND, detail=str(e)
+        )  # CORRECTED detail
     except Exception as e:
-        logger.error(f"Error retrieving status for job ID {job_id}: {e}")
+        logger.error(
+            f"Unexpected error fetching status for job_id {job_id}: {e}", exc_info=True
+        )
         raise HTTPException(
-            status_code=500,
-            detail=f"Error retrieving status for job {job_id}: {str(e)}",
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An unexpected error occurred while fetching job status.",
         )
 
 
@@ -212,53 +196,41 @@ async def predict_fp(request: PredictionRequest) -> PredictionResponse:
     name="batch_predict_csv",
 )
 async def submit_batch_predict_csv(
-    background_tasks: BackgroundTasks,  # Non-default argument first
-    file: UploadFile = File(
-        ..., description="CSV file with SMILES strings"
-    ),  # Default argument second
+    background_tasks: BackgroundTasks,
+    file: UploadFile = File(...),
 ) -> BatchPredictionResponse:
-    """Submit a CSV file for batch prediction.
+    logger.info(f"submit_batch_predict_csv called for file: {file.filename}")
+    logger.debug(f"BackgroundTasks instance ID: {id(background_tasks)}")
 
-    The CSV file must contain a header row with a column named 'SMILES' (case-insensitive).
-    Each subsequent row should contain a SMILES string in that column.
-
-    The job will be processed asynchronously. Use the returned job ID to check status
-    and retrieve results.
-    """
-    logger.info(f"Received batch prediction request for file: {file.filename}")
-    if not file.filename:
-        logger.warning("Batch prediction request with no filename.")
+    if not file.filename:  # REINTRODUCED filename check
         raise HTTPException(status_code=400, detail="File name is required.")
 
-    if not file.filename.lower().endswith(".csv"):
-        logger.warning(
-            f"Invalid file type for batch prediction: {file.filename}. Must be CSV."
-        )
-        raise HTTPException(status_code=400, detail="File must be a CSV.")
-
     try:
-        # The BatchProcessor's start_batch_job method is expected to handle
-        # CSV validation, job creation (local and Supabase), and initiating async processing.
-        job_id = await batch_processor.start_batch_job(file=file)
-
-        # Schedule the actual processing in the background
-        background_tasks.add_task(batch_processor.process_batch_job, job_id)
-
-        # Immediately return the job ID and pending status
-        # The client will poll the status endpoint using this job_id
-        initial_job_details = batch_processor.get_job_status(job_id)
-        return BatchPredictionResponse(**initial_job_details)
-
+        # Call start_batch_job to get the actual job_id
+        job_id = await batch_processor.start_batch_job(file=file)  # REINTRODUCED
+        logger.info(f"Batch job started with ID: {job_id}")
     except ValueError as e:
-        logger.error(f"Validation error in batch submission: {str(e)}")
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        logger.error(f"Error starting batch job for {file.filename}: {str(e)}")
-        # Log the full traceback for unexpected errors
-        logger.exception("Full traceback for batch job start error:")
-        raise HTTPException(
-            status_code=500, detail=f"Error processing batch file: {str(e)}"
-        )
+        logger.error(f"ValueError during batch job start: {e}")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+    # Use the actual job_id for the background task
+    logger.debug(f"About to call background_tasks.add_task for job_id: {job_id}")
+    background_tasks.add_task(batch_processor.process_batch_job, job_id)
+
+    # For the response, get the status using the new job_id
+    response_data: JobDetailsDict = batch_processor.get_job_status(job_id)
+
+    # Construct BatchPredictionResponse directly
+    return BatchPredictionResponse(
+        id=UUID(response_data["id"]),  # Convert str to UUID
+        status=BatchPredictionStatus(response_data["status"]),  # Convert str to enum
+        filename=response_data.get("filename"),
+        total_molecules=response_data["total_molecules"],
+        processed_molecules=response_data["processed_molecules"],
+        created_at=response_data["created_at"],
+        completed_at=response_data.get("completed_at"),
+        result_url=response_data.get("result_url"),
+    )
 
 
 @app.get(
@@ -327,7 +299,13 @@ async def download_results(job_id: str) -> Union[RedirectResponse, StreamingResp
         # Ensure job_details["results"] is List[ResultItemDict]
         results_data = job_details.get("results", [])
         csv_content = batch_processor._generate_results_csv(results_data)
-        base_filename = os.path.splitext(job_details["filename"])[0]
+
+        original_filename = job_details.get("filename")
+        if original_filename:
+            base_filename = os.path.splitext(original_filename)[0]
+        else:
+            # Use job_id for a default filename if original is not available
+            base_filename = f"job_{job_id}"
         response_filename = f"{base_filename}_results.csv"
 
         return StreamingResponse(
