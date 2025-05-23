@@ -39,6 +39,9 @@ pytest-cov
 # Type stubs
 types-aiofiles
 types-python-dateutil  # ADDED FOR MYPY
+types-PyYAML
+types-requests # Add this line
+watchfiles
 
 # Optional for local development/testing outside Docker
 # python-dotenv
