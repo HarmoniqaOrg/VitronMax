@@ -33,7 +33,7 @@ class SupabaseClient:
         else:
             logger.info("Supabase client initialised")
 
-    # ───────────────────────── helpers ──────────────────────────
+    # ───────────────────── helpers ──────────────────────────
     def _hdr(
         self, *, json_ct: bool = False, prefer_minimal: bool = False
     ) -> Dict[str, str]:
@@ -86,12 +86,36 @@ class SupabaseClient:
         async with httpx.AsyncClient() as cli:
             r = await cli.patch(
                 f"{self.url}{route}",
-                headers=self._hdr(json_ct=True, prefer_minimal=True),
+                headers=self._hdr(json_ct=True),  
                 json=payload,
                 timeout=5.0,
             )
             if r.status_code in (200, 201, 204):
-                return {"success": True}
+                try:
+                    if not r.content:
+                        return {"success": True} 
+
+                    response_data = r.json()
+                    if isinstance(response_data, list) and len(response_data) > 0:
+                        return cast(Dict[str, Any], response_data[0])  # Return the first item from the list
+                    elif isinstance(response_data, dict):
+                        return cast(Dict[str, Any], response_data) # If it's already a dict, return as is
+                    else:
+                        logger.warning(
+                            "Supabase PATCH %s: Unexpected JSON response format: %s",
+                            route,
+                            type(response_data)
+                        )
+                        return {"success": True}
+                except Exception as e:  
+                    logger.error(
+                        "Supabase PATCH %s: Failed to parse JSON response (status %s): %s",
+                        route,
+                        r.status_code,
+                        e
+                    )
+                    return None  
+
             logger.error("Supabase PATCH %s → %s – %s", route, r.status_code, r.text)
             return None
 
