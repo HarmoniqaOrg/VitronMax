@@ -3,19 +3,17 @@
 
 from __future__ import annotations
 
-from typing import Any, AsyncGenerator, Dict, List, Optional, Tuple, cast
+from typing import Any, AsyncGenerator, Dict, Optional
 from unittest.mock import AsyncMock, MagicMock, PropertyMock, patch
-import asyncio
 import uuid
 import json
 
 import httpx
 import pytest
 import pytest_asyncio
-from loguru import logger
 
 from app.config import settings
-from app.db import STORAGE_BATCH_RESULTS_PATH, URL_EXPIRY_SECONDS, SupabaseClient
+from app.db import SupabaseClient
 from app.models import BatchPredictionStatus
 
 # Turn off noisy default loggers for tests
